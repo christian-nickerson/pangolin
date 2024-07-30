@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package embeddingService;
+
+service Inference {
+  rpc SBERT (InferenceRequest) returns (InferenceResponse) {}
+}
+
+message InferenceRequest {
+  repeated string text = 1;
+}
+
+message InferenceResponse {
+  repeated double embedding = 1;
+}
