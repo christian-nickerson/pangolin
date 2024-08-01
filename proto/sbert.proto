@@ -1,15 +1,32 @@
 syntax = "proto3";
 
-package embeddingService;
+package EmbeddingService;
 
-service Inference {
-  rpc SBERT (InferenceRequest) returns (InferenceResponse) {}
+service SentenceTransformers {
+  // Inference an embedding model
+  rpc Inference (InferenceRequest) returns (InferenceResponse);
+  // Model list
+  rpc ModelList (ModelListRequest) returns (ModelListResponse);
+  // Health check
+  rpc Health (HealthRequest) returns (HealthResponse);
 }
 
+// Inference types
 message InferenceRequest {
   repeated string text = 1;
+  string model_name = 2;
 }
 
 message InferenceResponse {
-  repeated double embedding = 1;
+  repeated double embeddings = 1;
 }
+
+// Model list types
+message ModelListRequest {}
+message ModelListResponse {
+  repeated string model_names = 1;
+}
+
+// Helath check types
+message HealthRequest {}
+message HealthResponse {}
