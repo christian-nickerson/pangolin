@@ -7,8 +7,6 @@ service SentenceTransformers {
   rpc Inference (InferenceRequest) returns (InferenceResponse);
   // Model list
   rpc ModelList (ModelListRequest) returns (ModelListResponse);
-  // Health check
-  rpc Health (HealthRequest) returns (HealthResponse);
 }
 
 // Inference types
@@ -16,7 +14,6 @@ message InferenceRequest {
   repeated string text = 1;
   string model_name = 2;
 }
-
 message InferenceResponse {
   repeated double embeddings = 1;
 }
@@ -26,7 +23,3 @@ message ModelListRequest {}
 message ModelListResponse {
   repeated string model_names = 1;
 }
-
-// Helath check types
-message HealthRequest {}
-message HealthResponse {}

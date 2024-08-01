@@ -1,0 +1,6 @@
+[global]
+
+[global.sentence-transformers]
+model_list = ["all-mpnet-base-v2", "all-MiniLM-L12-v2", "all-MiniLM-L6-v2"]
+
+[global.spacy]
