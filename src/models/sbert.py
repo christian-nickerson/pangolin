@@ -9,7 +9,10 @@ from models.base import EmbeddingModels
 
 class SentenceTransformerModels(EmbeddingModels):
     def __init__(self, model_list: List[str]) -> None:
-        """_summary_"""
+        """Sentence Transformer Models object for importing and inferencing embedding model classes
+
+        :param model_list: List of models to import and make available for inference
+        """
         self.registry = self._load_models(model_list)
 
     def encode(self, text: List[str], model_name: str) -> List[float]:
