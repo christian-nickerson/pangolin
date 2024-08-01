@@ -3,14 +3,16 @@ from typing import Dict, List
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import is_sentence_transformer_model
 
+from errors.embedding import ModelRemoteImportError
+from models.base import EmbeddingModels
 
-class SentenenceTransformerModels:
 
+class SentenceTransformerModels(EmbeddingModels):
     def __init__(self, model_list: List[str]) -> None:
         """_summary_"""
         self.registry = self._load_models(model_list)
 
-    def inference(self, text: List[str], model_name: str) -> List[float]:
+    def encode(self, text: List[str], model_name: str) -> List[float]:
         """Inference model with text to generate an embedding
 
         :param text: text used to generate embedding
@@ -24,6 +26,7 @@ class SentenenceTransformerModels:
     def _load_models(model_list: List[str]) -> Dict[str, SentenceTransformer]:
         """Load all models into a dictionary
 
+        :param model_list: list of all model names to import
         :return: model registry
         """
         registry = {}
@@ -31,8 +34,7 @@ class SentenenceTransformerModels:
             if is_sentence_transformer_model(model_name):
                 registry[model_name] = SentenceTransformer(model_name)
             else:
-                # TODO: replace error with custom error
-                raise NameError(f"could not load: {model_name} not found")
+                raise ModelRemoteImportError(model_name, "huggingface.co/sentence-transformers")
         return registry
 
     @property
