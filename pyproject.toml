@@ -27,6 +27,9 @@ sentence-transformers = "^3.0.1"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.black]
+line-length = 119
+
 [tool.ruff]
 line-length = 119 # Django convention
 indent-width = 4
