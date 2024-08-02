@@ -1,6 +1,12 @@
 [global]
+name = "Pangolin Embedding Service"
 
-[global.sentence-transformers]
+[global.server]
+port = 55001
+shutdown_period = 5
+
+
+[global.transformers]
 model_list = ["all-mpnet-base-v2", "all-MiniLM-L12-v2", "all-MiniLM-L6-v2"]
 
 [global.spacy]
