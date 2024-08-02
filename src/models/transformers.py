@@ -8,6 +8,7 @@ from models.base import EmbeddingModels
 
 
 class SentenceTransformerModels(EmbeddingModels):
+
     def __init__(self, model_list: List[str]) -> None:
         """Sentence Transformer Models object for importing and inferencing embedding model classes
 
@@ -37,7 +38,9 @@ class SentenceTransformerModels(EmbeddingModels):
             if is_sentence_transformer_model(model_name):
                 registry[model_name] = SentenceTransformer(model_name)
             else:
-                raise ModelRemoteImportError(model_name, "huggingface.co/sentence-transformers")
+                raise ModelRemoteImportError(
+                    model_name, "huggingface.co/sentence-transformers"
+                )
         return registry
 
     @property

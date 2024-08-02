@@ -6,6 +6,7 @@ from models.transformers import SentenceTransformerModels
 
 
 class SentenceTransformersService(pb2_grpc.SentenceTransformersServicer):
+
     def __init__(self, model_list: List[str]):
         """Sentence Transformers gRPC embedding service
 
