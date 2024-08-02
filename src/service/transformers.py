@@ -1,11 +1,11 @@
 from typing import List
 
+import proto.transformers_pb2 as pb2
+import proto.transformers_pb2_grpc as pb2_grpc
 from models.transformers import SentenceTransformerModels
-from proto.transformers_pb2 import InferenceResponse, ModelListResponse
-from proto.transformers_pb2_grpc import SentenceTransformersServicer
 
 
-class SentenceTransformersService(SentenceTransformersServicer):
+class SentenceTransformersService(pb2_grpc.SentenceTransformersServicer):
     def __init__(self, model_list: List[str]):
         """Sentence Transformers gRPC embedding service
 
@@ -21,7 +21,7 @@ class SentenceTransformersService(SentenceTransformersServicer):
         :return: _description_
         """
         embedding = self.transformers.encode(request.text, request.model_name)
-        return InferenceResponse(embeddings=embedding)
+        return pb2.InferenceResponse(embeddings=embedding)
 
     def ModelList(self, request, context):
         """Return a list of available models
@@ -30,4 +30,4 @@ class SentenceTransformersService(SentenceTransformersServicer):
         :param context: _description_
         :return: _description_
         """
-        return ModelListResponse(model_names=self.transformers.model_list)
+        return pb2.ModelListResponse(model_names=self.transformers.model_list)
