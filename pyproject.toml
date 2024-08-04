@@ -9,12 +9,41 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.12"
 
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"
 pytest-cov = "^5.0.0"
 ruff = "^0.5.5"
+black = "^24.4.2"
+mypy = "^1.11.1"
+types-protobuf = "^5.27.0.20240626"
+grpcio-tools = "^1.65.1"
+
+[tool.poetry.group.embedding-server.dependencies]
+dynaconf = "^3.2.6"
+grpcio = "^1.65.1"
+grpc-interceptor = "^0.15.4"
+sentence-transformers = "^3.0.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 119
+
+[tool.ruff]
+line-length = 119 # Django convention
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B"]
+ignore = ["E501"]
+unfixable = ["B"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F401"]
+"src/proto/*" = ["B028", "F541"]
+"**/{tests,docs,tools}/*" = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"

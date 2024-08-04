@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package EmbeddingService;
+
+service SentenceTransformers {
+  // Inference an embedding model
+  rpc Inference (InferenceRequest) returns (InferenceResponse);
+  // Model list
+  rpc ModelList (ModelListRequest) returns (ModelListResponse);
+}
+
+// Inference types
+message InferenceRequest {
+  repeated string text = 1;
+  string model_name = 2;
+}
+message InferenceResponse {
+  repeated double embeddings = 1;
+}
+
+// Model list types
+message ModelListRequest {}
+message ModelListResponse {
+  repeated string model_names = 1;
+}

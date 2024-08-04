@@ -1,0 +1,10 @@
+name = "Embedding Service"
+
+[server]
+port = 55001
+shutdown_period = 5
+
+[transformers]
+model_list = ["all-mpnet-base-v2", "all-MiniLM-L6-v2"]
+
+[spacy]
