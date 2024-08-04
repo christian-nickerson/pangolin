@@ -1,10 +1,14 @@
+import logging
 from typing import Dict, List
 
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import is_sentence_transformer_model
 
+from config import settings
 from errors.embedding import ModelRemoteImportError
 from models.base import EmbeddingModels
+
+logger = logging.getLogger(settings.name)
 
 
 class SentenceTransformerModels(EmbeddingModels):
@@ -14,6 +18,7 @@ class SentenceTransformerModels(EmbeddingModels):
 
         :param model_list: List of models to import and make available for inference
         """
+        self.repo = "sentence-transformers"
         self.registry = self._load_models(model_list)
 
     def encode(self, text: List[str], model_name: str) -> List[float]:
@@ -26,8 +31,7 @@ class SentenceTransformerModels(EmbeddingModels):
         embedding = self.registry[model_name].encode(text)
         return embedding.tolist()
 
-    @staticmethod
-    def _load_models(model_list: List[str]) -> Dict[str, SentenceTransformer]:
+    def _load_models(self, model_list: List[str]) -> Dict[str, SentenceTransformer]:
         """Load all models into a dictionary
 
         :param model_list: list of all model names to import
@@ -35,10 +39,12 @@ class SentenceTransformerModels(EmbeddingModels):
         """
         registry = {}
         for model_name in model_list:
-            if is_sentence_transformer_model(model_name):
+            logger.debug(f"{self.repo} importing: {model_name}")
+            if is_sentence_transformer_model(f"{self.repo}/{model_name}"):
                 registry[model_name] = SentenceTransformer(model_name)
             else:
-                raise ModelRemoteImportError(model_name, "huggingface.co/sentence-transformers")
+                raise ModelRemoteImportError(model_name, f"huggingface.co/{self.repo}")
+        logger.info(f"{self.repo} loaded successfully")
         return registry
 
     @property

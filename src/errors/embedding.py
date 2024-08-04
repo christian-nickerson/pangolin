@@ -8,9 +8,8 @@ class ModelRemoteImportError(Exception):
         """Exception raised when model failed to import from remote repository
 
         :param model_name: name of model that failed to import
-        :param site: name of repository used to import model
-        :param message: explanation of the error, defaults to "{model_name} could not be found"
+        :param repository: name of repository used to import model
         """
-        self.message = "{model_name} not found on {repository}"
-        self.message = self.message.format(model_name, repository)
+        self.message = "{name} not found on {repo}"
+        self.message = self.message.format(name=model_name, repo=repository)
         super().__init__(self.message)

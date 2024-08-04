@@ -1,7 +1,12 @@
+import logging
 import signal
 from concurrent import futures
 
 import grpc
+
+from config import settings
+
+logger = logging.getLogger(settings.name)
 
 
 class Server:
@@ -30,17 +35,20 @@ class Server:
         endpoint = f"{self.__address}:{self.__port}"
         self.__server.add_insecure_port(endpoint)
         self.__server.start()
+        logger.info(f"server started and listening on port {self.__port}")
+
         self.__server.wait_for_termination()
 
     def __shutdown_config(self) -> None:
         """Handle signal interrupts to gracefully shutdown server"""
         signal.signal(signal.SIGINT, self.stop)
         signal.signal(signal.SIGTERM, self.stop)
-        signal.signal(signal.SIGKILL, self.stop)
 
     def stop(self, *args) -> None:
         """Stops the server gracefully"""
+        logger.debug(f"server stopping...")
         self.__server.stop(self.__shutdown_period)
+        logger.info(f"server successfully shutdown safely")
 
     @property
     def instance(self):
