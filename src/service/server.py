@@ -5,6 +5,7 @@ from concurrent import futures
 import grpc
 
 from config import settings
+from interceptors.logging import LoggingInterceptor
 
 logger = logging.getLogger(settings.name)
 
@@ -28,15 +29,17 @@ class Server:
         self.__port = port
         self.__shutdown_period = shutdown_period
         self.__shutdown_config()
-        self.__server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_worker_threads))
+        self.__server = grpc.server(
+            thread_pool=futures.ThreadPoolExecutor(max_workers=max_worker_threads),
+            interceptors=[LoggingInterceptor()],
+        )
 
     def start(self) -> None:
         """Starts the grpc server"""
         endpoint = f"{self.__address}:{self.__port}"
         self.__server.add_insecure_port(endpoint)
         self.__server.start()
-        logger.info(f"server started and listening on port {self.__port}")
-
+        logger.info(f"serving on {self.__address} port {self.__port}")
         self.__server.wait_for_termination()
 
     def __shutdown_config(self) -> None:
@@ -48,7 +51,7 @@ class Server:
         """Stops the server gracefully"""
         logger.debug(f"server stopping...")
         self.__server.stop(self.__shutdown_period)
-        logger.info(f"server successfully shutdown safely")
+        logger.info(f"server shutdown safely")
 
     @property
     def instance(self):

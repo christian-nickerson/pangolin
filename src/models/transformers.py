@@ -18,8 +18,8 @@ class SentenceTransformerModels(EmbeddingModels):
 
         :param model_list: List of models to import and make available for inference
         """
-        self.repo = "sentence-transformers"
-        self.registry = self._load_models(model_list)
+        self.__repo = "sentence-transformers"
+        self.__registry = self._load_models(model_list)
 
     def encode(self, text: List[str], model_name: str) -> List[float]:
         """Inference model with text to generate an embedding
@@ -28,7 +28,7 @@ class SentenceTransformerModels(EmbeddingModels):
         :param model_name: model name to use to generate embedding
         :return: embedding
         """
-        embedding = self.registry[model_name].encode(text)
+        embedding = self.__registry[model_name].encode(text)
         return embedding.tolist()
 
     def _load_models(self, model_list: List[str]) -> Dict[str, SentenceTransformer]:
@@ -39,12 +39,12 @@ class SentenceTransformerModels(EmbeddingModels):
         """
         registry = {}
         for model_name in model_list:
-            logger.debug(f"{self.repo} importing: {model_name}")
-            if is_sentence_transformer_model(f"{self.repo}/{model_name}"):
+            logger.debug(f"{self.__repo} importing: {model_name}")
+            if is_sentence_transformer_model(f"{self.__repo}/{model_name}"):
                 registry[model_name] = SentenceTransformer(model_name)
             else:
-                raise ModelRemoteImportError(model_name, f"huggingface.co/{self.repo}")
-        logger.info(f"{self.repo} loaded successfully")
+                raise ModelRemoteImportError(model_name, f"huggingface.co/{self.__repo}")
+        logger.info(f"{self.__repo} loaded successfully")
         return registry
 
     @property
@@ -53,4 +53,4 @@ class SentenceTransformerModels(EmbeddingModels):
 
         :return: List of available models
         """
-        return list(self.registry.keys())
+        return list(self.__registry.keys())

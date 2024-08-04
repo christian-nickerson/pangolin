@@ -20,7 +20,7 @@ if __name__ == "__main__":
     loggger = create_logger(settings.name)
 
     server = Server(
-        address="0.0.0.0",
+        address="[::]",
         port=settings.server.port,
         shutdown_period=settings.server.shutdown_period,
     )
