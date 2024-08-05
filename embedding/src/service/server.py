@@ -3,9 +3,8 @@ import signal
 from concurrent import futures
 
 import grpc
-
 from config import settings
-from interceptors.logging import LoggingInterceptor
+from interceptors.logging import ExceptionLoggingInterceptor
 
 logger = logging.getLogger(settings.name)
 
@@ -31,7 +30,7 @@ class Server:
         self.__shutdown_config()
         self.__server = grpc.server(
             thread_pool=futures.ThreadPoolExecutor(max_workers=max_worker_threads),
-            interceptors=[LoggingInterceptor()],
+            interceptors=[ExceptionLoggingInterceptor()],
         )
 
     def start(self) -> None:
@@ -49,9 +48,9 @@ class Server:
 
     def stop(self, *args) -> None:
         """Stops the server gracefully"""
-        logger.debug(f"server stopping...")
+        logger.debug("server stopping...")
         self.__server.stop(self.__shutdown_period)
-        logger.info(f"server shutdown safely")
+        logger.info("server shutdown safely")
 
     @property
     def instance(self):
