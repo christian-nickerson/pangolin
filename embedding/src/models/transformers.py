@@ -1,12 +1,11 @@
 import logging
 from typing import Dict, List
 
+from config import settings
+from exceptions.embedding import ModelRemoteImportError
+from models.base import EmbeddingModels
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import is_sentence_transformer_model
-
-from config import settings
-from errors.embedding import ModelRemoteImportError
-from models.base import EmbeddingModels
 
 logger = logging.getLogger(settings.name)
 

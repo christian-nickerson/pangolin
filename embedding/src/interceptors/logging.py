@@ -1,11 +1,10 @@
 import logging
 from typing import Any, Callable
 
+from config import settings
 from grpc import ServicerContext, StatusCode
 from grpc_interceptor import ServerInterceptor
 from grpc_interceptor.exceptions import GrpcException
-
-from config import settings
 
 logger = logging.getLogger(settings.name)
 

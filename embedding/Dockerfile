@@ -16,7 +16,7 @@ COPY pyproject.toml .
 RUN poetry config virtualenvs.create false
 RUN poetry install --without dev --with embedding-server
 
-COPY src/ .src/
+COPY embedding/src/ .src/
 COPY settings.toml .
 
 USER 999

@@ -47,3 +47,13 @@ unfixable = ["B"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.mypy]
+mypy_path = ["^/src", "^/tests"]
+strict_optional = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--cov", "--verbose"]
+norecursedirs = ["dist", "build"]
+pythonpath = ["src/"]
