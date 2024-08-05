@@ -35,6 +35,6 @@ class SentenceTransformersService(SentenceTransformersServicer):
 
         :param request: model list request object
         :param context: generic context object
-        :return: model list respone object
+        :return: model list response object
         """
         return ModelListResponse(model_names=self.__transformers.model_list)
