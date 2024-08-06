@@ -4,7 +4,8 @@ version = "0.0.1"
 description = ""
 authors = ["Christian Nickerson <you@example.com>"]
 readme = "README.md"
-package-mode = false
+
+packages = [{ include = "*", from = "embedding/src" }]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -42,7 +43,7 @@ unfixable = ["B"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "F401"]
-"src/proto/*" = ["B028", "F541"]
+"embedding/src/proto/*" = ["B028", "F541"]
 "**/{tests,docs,tools}/*" = ["E402"]
 
 [tool.ruff.format]
