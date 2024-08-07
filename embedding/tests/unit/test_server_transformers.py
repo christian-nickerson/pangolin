@@ -9,9 +9,9 @@ from proto.transformers_pb2 import (  # type: ignore[attr-defined]
 from proto.transformers_pb2_grpc import SentenceTransformersStub
 
 
-def test_inference(server, model_name, lorem_embedding, lorem_ipsum) -> None:
+def test_inference(server, address, model_name, lorem_embedding, lorem_ipsum) -> None:
     """test inference returns as expected"""
-    with grpc.insecure_channel(server) as channel:
+    with grpc.insecure_channel(address) as channel:
         stub = SentenceTransformersStub(channel)
         message = InferenceRequest(text=[lorem_ipsum], model_name=model_name)
         response: InferenceResponse = stub.Inference(message)
@@ -19,9 +19,9 @@ def test_inference(server, model_name, lorem_embedding, lorem_ipsum) -> None:
     assert embedding == lorem_embedding
 
 
-def test_inference_incorrect_model_name(server, lorem_ipsum) -> None:
+def test_inference_incorrect_model_name(server, address, lorem_ipsum) -> None:
     """test inference with wrong model name fails as expected"""
-    with grpc.insecure_channel(server) as channel:
+    with grpc.insecure_channel(address) as channel:
         stub = SentenceTransformersStub(channel)
         message = InferenceRequest(text=[lorem_ipsum], model_name="hello mum")
         with pytest.raises(grpc.RpcError) as e:
@@ -29,9 +29,9 @@ def test_inference_incorrect_model_name(server, lorem_ipsum) -> None:
         assert e.value.code() == grpc.StatusCode.INVALID_ARGUMENT
 
 
-def test_model_list(server, model_name) -> None:
+def test_model_list(server, address, model_name) -> None:
     """test model_list returns as expected"""
-    with grpc.insecure_channel(server) as channel:
+    with grpc.insecure_channel(address) as channel:
         stub = SentenceTransformersStub(channel)
         message = ModelListRequest()
         response: ModelListResponse = stub.ModelList(message)

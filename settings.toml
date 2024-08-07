@@ -1,8 +1,9 @@
-name = "Embedding Service"
+name = "EmbeddingService"
 
 [server]
 port = 50051
 shutdown_period = 5
+worker_threads = 10
 
 [transformers]
 model_list = ["all-mpnet-base-v2", "all-MiniLM-L6-v2"]

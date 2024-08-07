@@ -15,13 +15,19 @@ def port() -> int:
 
 
 @pytest.fixture(scope="session")
-def server(port) -> Iterator[str]:
+def address(port) -> str:
+    """grpc server port"""
+    return f"localhost:{port}"
+
+
+@pytest.fixture(scope="session")
+def server(port) -> Iterator[Server]:
     """start grpc server, returns address"""
     _ = create_logger(settings.name)
-    server = Server(port=port, shutdown_period=0)
+    server = Server(port=port, shutdown_period=5)
     add_services(server)
     server.start(False)
-    yield f"localhost:{port}"
+    yield server
     server.stop()
 
 
