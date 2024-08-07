@@ -14,8 +14,11 @@ message InferenceRequest {
   repeated string text = 1;
   string model_name = 2;
 }
+message Vector {
+  repeated double components =1;
+}
 message InferenceResponse {
-  repeated double embeddings = 1;
+  repeated Vector embeddings = 1;
 }
 
 // Model list types

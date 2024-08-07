@@ -20,7 +20,7 @@ class SentenceTransformerModels(EmbeddingModels):
         self.__repo = "sentence-transformers"
         self.__registry = self._load_models(model_list)
 
-    def encode(self, text: List[str], model_name: str) -> List[float]:
+    def encode(self, text: List[str], model_name: str) -> List[List[float]]:
         """Inference model with text to generate an embedding
 
         :param text: text used to generate embedding

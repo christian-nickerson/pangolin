@@ -27,3 +27,4 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: ["types-protobuf"]
+        exclude: "_pb2.py$"

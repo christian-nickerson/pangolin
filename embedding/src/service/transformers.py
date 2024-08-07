@@ -1,5 +1,6 @@
 from typing import List
 
+from exceptions.server import ModelNotImplemented
 from grpc import ServicerContext
 from models.transformers import SentenceTransformerModels
 from proto.transformers_pb2 import (  # type: ignore[attr-defined]
@@ -7,6 +8,7 @@ from proto.transformers_pb2 import (  # type: ignore[attr-defined]
     InferenceResponse,
     ModelListRequest,
     ModelListResponse,
+    Vector,
 )
 from proto.transformers_pb2_grpc import SentenceTransformersServicer
 
@@ -27,8 +29,12 @@ class SentenceTransformersService(SentenceTransformersServicer):
         :param context: generic context object
         :return: inference response object
         """
-        embedding = self.__transformers.encode(request.text, request.model_name)
-        return InferenceResponse(embeddings=embedding)
+        if request.model_name not in self.__transformers.model_list:
+            raise ModelNotImplemented(model_name=request.model_name)
+
+        embeddings = self.__transformers.encode(list(request.text), request.model_name)
+        message = [Vector(components=vector) for vector in embeddings]
+        return InferenceResponse(embeddings=message)
 
     def ModelList(self, request: ModelListRequest, context: ServicerContext) -> ModelListResponse:
         """Return a list of available models

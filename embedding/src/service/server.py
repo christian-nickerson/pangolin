@@ -33,13 +33,17 @@ class Server:
             interceptors=[ExceptionLoggingInterceptor()],
         )
 
-    def start(self) -> None:
-        """Starts the grpc server"""
+    def start(self, wait_for_termination: bool = True) -> None:
+        """Starts the grpc server
+
+        :param wait_for_termination: enter server into wait for termination. Primarily used for test purposes.
+        """
         endpoint = f"{self.__address}:{self.__port}"
         self.__server.add_insecure_port(endpoint)
         self.__server.start()
         logger.info(f"serving on {self.__address} port {self.__port}")
-        self.__server.wait_for_termination()
+        if wait_for_termination:
+            self.__server.wait_for_termination()
 
     def __shutdown_config(self) -> None:
         """Handle signal interrupts to gracefully shutdown server"""

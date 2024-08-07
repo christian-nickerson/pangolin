@@ -1,7 +1,7 @@
 name = "Embedding Service"
 
 [server]
-port = 55001
+port = 50051
 shutdown_period = 5
 
 [transformers]

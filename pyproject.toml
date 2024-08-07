@@ -5,6 +5,7 @@ description = ""
 authors = ["Christian Nickerson <you@example.com>"]
 readme = "README.md"
 
+package-mode = false
 packages = [{ include = "*", from = "embedding/src" }]
 
 [tool.poetry.dependencies]
@@ -23,6 +24,7 @@ grpcio-tools = "^1.65.1"
 dynaconf = "^3.2.6"
 grpcio = "^1.65.1"
 grpc-interceptor = "^0.15.4"
+grpcio-health-checking = "^1.65.4"
 sentence-transformers = "^3.0.1"
 
 [build-system]
@@ -50,7 +52,7 @@ unfixable = ["B"]
 quote-style = "double"
 
 [tool.mypy]
-mypy_path = ["^/src", "^/tests"]
+mypy_path = ["embedding/src", "embedding/tests"]
 strict_optional = true
 
 [tool.pytest.ini_options]
