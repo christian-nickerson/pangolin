@@ -20,6 +20,8 @@ COPY embedding/src/ .src/
 COPY settings.toml .
 
 USER 999
-EXPOSE 5501
+
+ENV PORT 55001
+EXPOSE $PORT
 
 ENTRYPOINT [ "python3", "src/main.py" ]
