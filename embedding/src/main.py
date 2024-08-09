@@ -17,13 +17,13 @@ def add_services(server: Server) -> None:
 
 if __name__ == "__main__":
 
-    loggger = create_logger(settings.name)
+    loggger = create_logger(settings.embedding_server.name)
 
     server = Server(
         address="[::]",
-        port=settings.server.port,
-        shutdown_period=settings.server.shutdown_period,
-        max_worker_threads=settings.server.worker_threads,
+        port=settings.embedding_server.port,
+        shutdown_period=settings.embedding_server.shutdown_period,
+        max_worker_threads=settings.embedding_server.worker_threads,
     )
 
     add_services(server)

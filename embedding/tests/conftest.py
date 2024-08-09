@@ -23,7 +23,7 @@ def address(port) -> str:
 @pytest.fixture(scope="session")
 def server(port) -> Iterator[Server]:
     """start grpc server, returns address"""
-    _ = create_logger(settings.name)
+    _ = create_logger(settings.embedding_server.name)
     server = Server(port=port, shutdown_period=5)
     add_services(server)
     server.start(False)
