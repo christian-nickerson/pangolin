@@ -7,7 +7,7 @@ from models.base import EmbeddingModels
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import is_sentence_transformer_model
 
-logger = logging.getLogger(settings.embedding_server.name)
+logger = logging.getLogger(settings.server.embedding.name)
 
 
 class SentenceTransformerModels(EmbeddingModels):

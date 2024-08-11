@@ -6,13 +6,18 @@ import (
 	"github.com/spf13/viper"
 )
 
-type EmbeddingServer struct {
+type ServerConfig struct {
 	Name string `mapstructure:"name"`
 	Port int    `mapstructure:"port"`
 }
 
+type Server struct {
+	Embeddings ServerConfig `mapstructure:"embeddings"`
+	API        ServerConfig `mapstructure:"api"`
+}
+
 type Settings struct {
-	EmbeddingServer EmbeddingServer `mapstructure:"embedding_server"`
+	Server Server `mapstructure:"server"`
 }
 
 // LoadSettings reads configurations from a toml file or environment variables

@@ -6,7 +6,7 @@ from grpc import ServicerContext, StatusCode
 from grpc_interceptor import ServerInterceptor
 from grpc_interceptor.exceptions import GrpcException
 
-logger = logging.getLogger(settings.embedding_server.name)
+logger = logging.getLogger(settings.server.embedding.name)
 
 
 def status(code: StatusCode) -> str:

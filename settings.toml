@@ -1,4 +1,8 @@
-[embedding_server]
+[server.api]
+name = "Pangolin"
+port = 3000
+
+[server.embeddings]
 name = "EmbeddingService"
 port = 50051
 shutdown_period = 5
