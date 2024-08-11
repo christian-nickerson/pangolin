@@ -5,9 +5,11 @@ import (
 	"strconv"
 
 	"github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 
 	"github.com/christian-nickerson/pangolin/api/internal/configs"
-	"github.com/gofiber/fiber/v2"
+	"github.com/christian-nickerson/pangolin/api/internal/routes"
 )
 
 func main() {
@@ -23,6 +25,9 @@ func main() {
 		JSONDecoder: json.Unmarshal,
 	})
 
-	// run app
+	// add routes
+	app.Use(healthcheck.New(routes.HealthCheckConfig))
+
+	// start serving
 	app.Listen(":" + strconv.Itoa(settings.Server.API.Port))
 }
