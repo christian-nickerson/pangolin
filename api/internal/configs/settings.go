@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -22,7 +23,7 @@ type Settings struct {
 
 // LoadSettings reads configurations from a toml file or environment variables
 // and returns a Settings struct of all setting variables
-func LoadSettings(fileName string) (settings Settings, err error) {
+func Load(fileName string) (settings Settings, err error) {
 	// find settings in configs or root
 	viper.AddConfigPath("./internal/configs")
 	viper.AddConfigPath(".")
@@ -33,8 +34,9 @@ func LoadSettings(fileName string) (settings Settings, err error) {
 	viper.SetEnvPrefix("PANGOLIN")
 
 	// set up config
-	viper.SetConfigName(fileName)
-	viper.SetConfigType("toml")
+	fileBase, fileType := fileNameSplit(fileName)
+	viper.SetConfigName(fileBase)
+	viper.SetConfigType(fileType)
 	viper.AutomaticEnv()
 
 	err = viper.ReadInConfig()
@@ -43,5 +45,13 @@ func LoadSettings(fileName string) (settings Settings, err error) {
 	}
 
 	err = viper.Unmarshal(&settings)
+	return
+}
+
+// take a file name and return the base name and file type from extension
+func fileNameSplit(fileName string) (fileBase string, fileType string) {
+	fileExtension := filepath.Ext(fileName)
+	fileType = strings.Trim(fileExtension, ".")
+	fileBase = strings.TrimSuffix(fileName, fileExtension)
 	return
 }
