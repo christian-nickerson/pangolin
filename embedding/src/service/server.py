@@ -7,7 +7,7 @@ from config import settings
 from grpc_health.v1 import health, health_pb2, health_pb2_grpc
 from interceptors.logging import ExceptionLoggingInterceptor
 
-logger = logging.getLogger(settings.server.embedding.name)
+logger = logging.getLogger(settings.server.embeddings.name)
 
 
 class Server:
