@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/goccy/go-json"
@@ -17,10 +16,7 @@ import (
 
 func main() {
 	// load settings
-	settings, err := configs.Load("settings.toml")
-	if err != nil {
-		log.Fatal("Loading settings failed:", err)
-	}
+	settings := configs.Load("settings.toml")
 
 	// set up fiber app
 	app := fiber.New(fiber.Config{

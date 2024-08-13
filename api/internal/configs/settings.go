@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"log"
 	"path/filepath"
 	"strings"
 
@@ -23,7 +24,7 @@ type Settings struct {
 
 // LoadSettings reads configurations from a toml file or environment variables
 // and returns a Settings struct of all setting variables
-func Load(fileName string) (settings Settings, err error) {
+func Load(fileName string) (settings Settings) {
 	// find settings in configs or root
 	viper.AddConfigPath("./internal/configs")
 	viper.AddConfigPath(".")
@@ -39,12 +40,15 @@ func Load(fileName string) (settings Settings, err error) {
 	viper.SetConfigType(fileType)
 	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
+	err := viper.ReadInConfig()
 	if err != nil {
-		return
+		log.Fatal("Loading settings failed", err)
 	}
 
 	err = viper.Unmarshal(&settings)
+	if err != nil {
+		log.Fatal("Failed to fit file to settings:", err)
+	}
 	return
 }
 
