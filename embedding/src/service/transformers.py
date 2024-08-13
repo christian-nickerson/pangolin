@@ -3,27 +3,27 @@ from typing import List
 from exceptions.server import ModelNotImplemented
 from grpc import ServicerContext
 from models.transformers import SentenceTransformerModels
-from proto.transformers_pb2 import (  # type: ignore[attr-defined]
+from proto.embedding_pb2 import (  # type: ignore[attr-defined]
     InferenceRequest,
     InferenceResponse,
     ModelListRequest,
     ModelListResponse,
     Vector,
 )
-from proto.transformers_pb2_grpc import SentenceTransformersServicer
+from proto.embedding_pb2_grpc import EmbeddingsServicer
 
 
-class SentenceTransformersService(SentenceTransformersServicer):
+class EmbeddingsService(EmbeddingsServicer):
 
     def __init__(self, model_list: List[str]):
-        """Sentence Transformers gRPC embedding service
+        """Embeddings gRPC service
 
         :param model_list: List of models to make available
         """
         self.__transformers = SentenceTransformerModels(model_list)
 
     def Inference(self, request: InferenceRequest, context: ServicerContext) -> InferenceResponse:
-        """Inference sentence transformer model
+        """Inference embeddings models
 
         :param request: inference request object
         :param context: generic context object

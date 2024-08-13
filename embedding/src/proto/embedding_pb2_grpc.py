@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from . import transformers_pb2 as transformers__pb2
+from . import embedding_pb2 as embedding__pb2
 
 GRPC_GENERATED_VERSION = '1.65.4'
 GRPC_VERSION = grpc.__version__
@@ -20,7 +20,7 @@ except ImportError:
 if _version_not_supported:
     warnings.warn(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in transformers_pb2_grpc.py depends on'
+        + f' but the generated code in embedding_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -30,7 +30,7 @@ if _version_not_supported:
     )
 
 
-class SentenceTransformersStub(object):
+class EmbeddingsStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -40,18 +40,18 @@ class SentenceTransformersStub(object):
             channel: A grpc.Channel.
         """
         self.Inference = channel.unary_unary(
-                '/EmbeddingService.SentenceTransformers/Inference',
-                request_serializer=transformers__pb2.InferenceRequest.SerializeToString,
-                response_deserializer=transformers__pb2.InferenceResponse.FromString,
+                '/EmbeddingsService.Embeddings/Inference',
+                request_serializer=embedding__pb2.InferenceRequest.SerializeToString,
+                response_deserializer=embedding__pb2.InferenceResponse.FromString,
                 _registered_method=True)
         self.ModelList = channel.unary_unary(
-                '/EmbeddingService.SentenceTransformers/ModelList',
-                request_serializer=transformers__pb2.ModelListRequest.SerializeToString,
-                response_deserializer=transformers__pb2.ModelListResponse.FromString,
+                '/EmbeddingsService.Embeddings/ModelList',
+                request_serializer=embedding__pb2.ModelListRequest.SerializeToString,
+                response_deserializer=embedding__pb2.ModelListResponse.FromString,
                 _registered_method=True)
 
 
-class SentenceTransformersServicer(object):
+class EmbeddingsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Inference(self, request, context):
@@ -69,27 +69,27 @@ class SentenceTransformersServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_SentenceTransformersServicer_to_server(servicer, server):
+def add_EmbeddingsServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Inference': grpc.unary_unary_rpc_method_handler(
                     servicer.Inference,
-                    request_deserializer=transformers__pb2.InferenceRequest.FromString,
-                    response_serializer=transformers__pb2.InferenceResponse.SerializeToString,
+                    request_deserializer=embedding__pb2.InferenceRequest.FromString,
+                    response_serializer=embedding__pb2.InferenceResponse.SerializeToString,
             ),
             'ModelList': grpc.unary_unary_rpc_method_handler(
                     servicer.ModelList,
-                    request_deserializer=transformers__pb2.ModelListRequest.FromString,
-                    response_serializer=transformers__pb2.ModelListResponse.SerializeToString,
+                    request_deserializer=embedding__pb2.ModelListRequest.FromString,
+                    response_serializer=embedding__pb2.ModelListResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'EmbeddingService.SentenceTransformers', rpc_method_handlers)
+            'EmbeddingsService.Embeddings', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('EmbeddingService.SentenceTransformers', rpc_method_handlers)
+    server.add_registered_method_handlers('EmbeddingsService.Embeddings', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class SentenceTransformers(object):
+class Embeddings(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -106,9 +106,9 @@ class SentenceTransformers(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/EmbeddingService.SentenceTransformers/Inference',
-            transformers__pb2.InferenceRequest.SerializeToString,
-            transformers__pb2.InferenceResponse.FromString,
+            '/EmbeddingsService.Embeddings/Inference',
+            embedding__pb2.InferenceRequest.SerializeToString,
+            embedding__pb2.InferenceResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -133,9 +133,9 @@ class SentenceTransformers(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/EmbeddingService.SentenceTransformers/ModelList',
-            transformers__pb2.ModelListRequest.SerializeToString,
-            transformers__pb2.ModelListResponse.FromString,
+            '/EmbeddingsService.Embeddings/ModelList',
+            embedding__pb2.ModelListRequest.SerializeToString,
+            embedding__pb2.ModelListResponse.FromString,
             options,
             channel_credentials,
             insecure,

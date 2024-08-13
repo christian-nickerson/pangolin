@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package EmbeddingService;
-option go_package = "github.com/christian-nickerson/pangolin";
+package EmbeddingsService;
+option go_package = "github.com/christian-nickerson/pangolin/api/internal/proto";
 
-service SentenceTransformers {
+service Embeddings {
   // Inference an embedding model
   rpc Inference (InferenceRequest) returns (InferenceResponse);
   // Model list
