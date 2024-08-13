@@ -7,31 +7,31 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
 from google.protobuf.internal import builder as _builder
-
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x12transformers.proto\x12\x10\x45mbeddingService"4\n\x10InferenceRequest\x12\x0c\n\x04text\x18\x01 \x03(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t"\x1c\n\x06Vector\x12\x12\n\ncomponents\x18\x01 \x03(\x01"A\n\x11InferenceResponse\x12,\n\nembeddings\x18\x01 \x03(\x0b\x32\x18.EmbeddingService.Vector"\x12\n\x10ModelListRequest"(\n\x11ModelListResponse\x12\x13\n\x0bmodel_names\x18\x01 \x03(\t2\xc2\x01\n\x14SentenceTransformers\x12T\n\tInference\x12".EmbeddingService.InferenceRequest\x1a#.EmbeddingService.InferenceResponse\x12T\n\tModelList\x12".EmbeddingService.ModelListRequest\x1a#.EmbeddingService.ModelListResponseb\x06proto3'
-)
+
+
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12transformers.proto\x12\x10\x45mbeddingService\"4\n\x10InferenceRequest\x12\x0c\n\x04text\x18\x01 \x03(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t\"\x1c\n\x06Vector\x12\x12\n\ncomponents\x18\x01 \x03(\x01\"A\n\x11InferenceResponse\x12,\n\nembeddings\x18\x01 \x03(\x0b\x32\x18.EmbeddingService.Vector\"\x12\n\x10ModelListRequest\"(\n\x11ModelListResponse\x12\x13\n\x0bmodel_names\x18\x01 \x03(\t2\xc2\x01\n\x14SentenceTransformers\x12T\n\tInference\x12\".EmbeddingService.InferenceRequest\x1a#.EmbeddingService.InferenceResponse\x12T\n\tModelList\x12\".EmbeddingService.ModelListRequest\x1a#.EmbeddingService.ModelListResponseB)Z\'github.com/christian-nickerson/pangolinb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "transformers_pb2", _globals)
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'transformers_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
-    DESCRIPTOR._loaded_options = None
-    _globals["_INFERENCEREQUEST"]._serialized_start = 40
-    _globals["_INFERENCEREQUEST"]._serialized_end = 92
-    _globals["_VECTOR"]._serialized_start = 94
-    _globals["_VECTOR"]._serialized_end = 122
-    _globals["_INFERENCERESPONSE"]._serialized_start = 124
-    _globals["_INFERENCERESPONSE"]._serialized_end = 189
-    _globals["_MODELLISTREQUEST"]._serialized_start = 191
-    _globals["_MODELLISTREQUEST"]._serialized_end = 209
-    _globals["_MODELLISTRESPONSE"]._serialized_start = 211
-    _globals["_MODELLISTRESPONSE"]._serialized_end = 251
-    _globals["_SENTENCETRANSFORMERS"]._serialized_start = 254
-    _globals["_SENTENCETRANSFORMERS"]._serialized_end = 448
+  _globals['DESCRIPTOR']._loaded_options = None
+  _globals['DESCRIPTOR']._serialized_options = b'Z\'github.com/christian-nickerson/pangolin'
+  _globals['_INFERENCEREQUEST']._serialized_start=40
+  _globals['_INFERENCEREQUEST']._serialized_end=92
+  _globals['_VECTOR']._serialized_start=94
+  _globals['_VECTOR']._serialized_end=122
+  _globals['_INFERENCERESPONSE']._serialized_start=124
+  _globals['_INFERENCERESPONSE']._serialized_end=189
+  _globals['_MODELLISTREQUEST']._serialized_start=191
+  _globals['_MODELLISTREQUEST']._serialized_end=209
+  _globals['_MODELLISTRESPONSE']._serialized_start=211
+  _globals['_MODELLISTRESPONSE']._serialized_end=251
+  _globals['_SENTENCETRANSFORMERS']._serialized_start=254
+  _globals['_SENTENCETRANSFORMERS']._serialized_end=448
 # @@protoc_insertion_point(module_scope)

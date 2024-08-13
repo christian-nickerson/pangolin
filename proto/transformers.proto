@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package EmbeddingService;
+option go_package = "github.com/christian-nickerson/pangolin";
 
 service SentenceTransformers {
   // Inference an embedding model
