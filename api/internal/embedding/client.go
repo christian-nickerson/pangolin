@@ -24,13 +24,13 @@ func Connect(address string) {
 	Client = proto.NewEmbeddingsClient(Conn)
 }
 
-func Inference(text []string, modelName string) []*proto.Vector {
+func Inference(text *[]string, modelName string) []*proto.Vector {
 	// timeout after 5 mins
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
 	// call model
-	response, err := Client.Inference(ctx, &proto.InferenceRequest{Text: text, ModelName: modelName})
+	response, err := Client.Inference(ctx, &proto.InferenceRequest{Text: *text, ModelName: modelName})
 	if err != nil {
 		log.Fatalf("Client.Inference failed on model %v: %v", modelName, err)
 	}
