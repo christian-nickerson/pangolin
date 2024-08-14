@@ -11,7 +11,8 @@ import (
 
 	"github.com/christian-nickerson/pangolin/api/internal/configs"
 	"github.com/christian-nickerson/pangolin/api/internal/logging"
-	"github.com/christian-nickerson/pangolin/api/internal/routes"
+	"github.com/christian-nickerson/pangolin/api/internal/routes/health"
+	v1 "github.com/christian-nickerson/pangolin/api/internal/routes/v1"
 )
 
 func main() {
@@ -29,7 +30,8 @@ func main() {
 	app.Use(logger.New(logging.LoggingConfig))
 
 	// add routes
-	app.Use(healthcheck.New(routes.HealthCheckConfig))
+	app.Use(healthcheck.New(health.HealthCheckConfig))
+	v1.AddV1Routes(app)
 
 	// start serving
 	app.Listen(":" + strconv.Itoa(settings.Server.API.Port))
