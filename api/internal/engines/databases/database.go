@@ -12,12 +12,12 @@ import (
 	"github.com/christian-nickerson/pangolin/api/internal/models"
 )
 
-var Database *gorm.DB
+var Client *gorm.DB
 
 func Connect(config *configs.DatabseConfig) {
 	var err error
 
-	Database, err = gorm.Open(connector(config), &gorm.Config{
+	Client, err = gorm.Open(connector(config), &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 	})
@@ -26,7 +26,7 @@ func Connect(config *configs.DatabseConfig) {
 		log.Fatalf("Failed to connect to database %v", err)
 	}
 
-	Database.AutoMigrate(&models.Database{})
+	Client.AutoMigrate(&models.Database{})
 }
 
 // build connection dialect object from config
