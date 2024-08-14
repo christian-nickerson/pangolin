@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ServerConfig struct {
-	Name string `mapstructure:"name"`
-	Port int    `mapstructure:"port"`
+type Settings struct {
+	Server   Server        `mapstructure:"server"`
+	Database DatabseConfig `mapstructure:"database"`
 }
 
 type Server struct {
@@ -18,11 +18,21 @@ type Server struct {
 	API        ServerConfig `mapstructure:"api"`
 }
 
-type Settings struct {
-	Server Server `mapstructure:"server"`
+type ServerConfig struct {
+	Name string `mapstructure:"name"`
+	Port int    `mapstructure:"port"`
 }
 
-// LoadSettings reads configurations from a toml file or environment variables
+type DatabseConfig struct {
+	Type     string `mapstructure:"type"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	DbName   string `mapstructure:"dbname"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+}
+
+// Load reads configurations from a toml file or environment variables
 // and returns a Settings struct of all setting variables
 func Load(fileName string) (settings Settings) {
 	// find settings in configs or root

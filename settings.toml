@@ -13,3 +13,10 @@ model_list = ["all-mpnet-base-v2", "all-MiniLM-L6-v2"]
 
 [spacy]
 model_list = []
+
+[database]
+type = "postgres"
+host = "localhost"
+port = 5432
+username = "postgres"
+password = "postgres"

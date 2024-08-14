@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 
 	"github.com/christian-nickerson/pangolin/api/internal/configs"
+	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
 	"github.com/christian-nickerson/pangolin/api/internal/logging"
 	"github.com/christian-nickerson/pangolin/api/internal/routes/health"
 	v1 "github.com/christian-nickerson/pangolin/api/internal/routes/v1"
@@ -18,6 +19,9 @@ import (
 func main() {
 	// load settings
 	settings := configs.Load("settings.toml")
+
+	// connect to services
+	databases.Connect(&settings.Database)
 
 	// set up fiber app
 	app := fiber.New(fiber.Config{
