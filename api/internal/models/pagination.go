@@ -11,6 +11,12 @@ type PaginationRequest struct {
 	OrderDesc         bool   `query:"orderDesc" validate:"bool"`
 }
 
+type PaginationResponse struct {
+	ContinuationToken string `json:"continuationToken"`
+	// TotalRecords      int
+	// TotalPages        int
+}
+
 // Validate pagination parameters
 func ValidatePagination(c *fiber.Ctx) error {
 	var errors []*IError

@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"encoding/base64"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm/clause"
 
@@ -19,19 +22,39 @@ func AddDatabaseRoutes(route fiber.Router) {
 	group.Delete("/:databaseId", DeleteDatabase)
 }
 
-// return a list of all database records
+// return paginated databse records
 func GetDatabases(c *fiber.Ctx) error {
 	var pagination models.PaginationRequest
 	var dbRecords []models.Database
 
 	c.QueryParser(&pagination)
 
-	databases.DB.Order(clause.OrderByColumn{
-		Column: clause.Column{Name: "ID"},
+	// set up base query without cursor token
+	query := databases.DB.Limit(pagination.PageSize + 1).Order(clause.OrderByColumn{
+		Column: clause.Column{Name: "id"},
 		Desc:   pagination.OrderDesc,
-	}).Find(&dbRecords)
+	})
 
-	return c.Status(200).JSON(dbRecords)
+	if pagination.ContinuationToken != "" {
+		// base64 validation handled earlier by validator
+		cursor, _ := base64.StdEncoding.DecodeString(pagination.ContinuationToken)
+		query = query.Where("id <= ?", cursor)
+	}
+
+	query.Find(&dbRecords)
+
+	n1 := dbRecords[len(dbRecords)-1]
+	idByteString := []byte(strconv.FormatUint(uint64(n1.ID), 10))
+	nextToken := base64.StdEncoding.EncodeToString(idByteString)
+
+	response := models.DatabaseResponse{
+		Databases: dbRecords[:len(dbRecords)-1],
+		PaginationResponse: models.PaginationResponse{
+			ContinuationToken: nextToken,
+		},
+	}
+
+	return c.Status(200).JSON(response)
 }
 
 // return a specific database record

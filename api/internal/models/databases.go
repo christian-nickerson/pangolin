@@ -14,3 +14,8 @@ type Database struct {
 	UpdatedAt   time.Time      `json:"updatedAt"`
 	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
+
+type DatabaseResponse struct {
+	PaginationResponse
+	Databases []Database
+}
