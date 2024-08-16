@@ -1,15 +1,18 @@
 package v1
 
 import (
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm/clause"
+
 	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
 	"github.com/christian-nickerson/pangolin/api/internal/models"
-	"github.com/gofiber/fiber/v2"
 )
 
+// add database routes to a fiber app
 func AddDatabaseRoutes(route fiber.Router) {
 	group := route.Group("/databases")
 
-	group.Get("", GetDatabases)
+	group.Get("", models.ValidatePagination, GetDatabases)
 	group.Get("/:databaseId", GetDatabase)
 	group.Post("", CreateDatabase)
 	group.Patch("/:databaseId", UpdateDatabase)
@@ -18,9 +21,16 @@ func AddDatabaseRoutes(route fiber.Router) {
 
 // return a list of all database records
 func GetDatabases(c *fiber.Ctx) error {
+	var pagination models.PaginationRequest
 	var dbRecords []models.Database
 
-	databases.Client.Find(&dbRecords)
+	c.QueryParser(&pagination)
+
+	databases.DB.Order(clause.OrderByColumn{
+		Column: clause.Column{Name: "ID"},
+		Desc:   pagination.OrderDesc,
+	}).Find(&dbRecords)
+
 	return c.Status(200).JSON(dbRecords)
 }
 
@@ -29,7 +39,7 @@ func GetDatabase(c *fiber.Ctx) error {
 	id := c.Params("databaseId")
 	var dbRecords models.Database
 
-	result := databases.Client.Find(&dbRecords, id)
+	result := databases.DB.Find(&dbRecords, id)
 	if result.RowsAffected == 0 {
 		return c.Status(404).SendString("Couldn't find database record")
 	}
@@ -45,7 +55,7 @@ func CreateDatabase(c *fiber.Ctx) error {
 		return c.Status(422).SendString(err.Error())
 	}
 
-	databases.Client.Create(&dbRecord)
+	databases.DB.Create(&dbRecord)
 	return c.SendStatus(201)
 }
 
@@ -58,7 +68,7 @@ func UpdateDatabase(c *fiber.Ctx) error {
 		return c.Status(422).SendString(err.Error())
 	}
 
-	result := databases.Client.Where("ID = ?", id).Updates(&dbRecord)
+	result := databases.DB.Where("ID = ?", id).Updates(&dbRecord)
 	if result.RowsAffected == 0 {
 		return c.Status(404).SendString("Couldn't find database record")
 	}
@@ -71,7 +81,7 @@ func DeleteDatabase(c *fiber.Ctx) error {
 	id := c.Params("databaseId")
 	var dbRecord models.Database
 
-	result := databases.Client.Delete(&dbRecord, id)
+	result := databases.DB.Delete(&dbRecord, id)
 	if result.RowsAffected == 0 {
 		return c.Status(404).SendString("Couldn't find database record")
 	}
