@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm/clause"
 
 	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
 	"github.com/christian-nickerson/pangolin/api/internal/models"
@@ -28,20 +27,7 @@ func GetDatabases(c *fiber.Ctx) error {
 	var dbRecords []models.Database
 
 	c.QueryParser(&pagination)
-
-	// set up base query without cursor token
-	query := databases.DB.Limit(pagination.PageSize + 1).Order(clause.OrderByColumn{
-		Column: clause.Column{Name: "id"},
-		Desc:   pagination.OrderDesc,
-	})
-
-	if pagination.ContinuationToken != "" {
-		// base64 validation handled earlier by validator
-		cursor, _ := base64.StdEncoding.DecodeString(pagination.ContinuationToken)
-		query = query.Where("id <= ?", cursor)
-	}
-
-	query.Find(&dbRecords)
+	databases.DB.Scopes(databases.Paginate(&pagination)).Find(&dbRecords)
 
 	n1 := dbRecords[len(dbRecords)-1]
 	idByteString := []byte(strconv.FormatUint(uint64(n1.ID), 10))
