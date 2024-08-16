@@ -12,12 +12,12 @@ import (
 	"github.com/christian-nickerson/pangolin/api/internal/models"
 )
 
-var Client *gorm.DB
+var DB *gorm.DB
 
-func Connect(config *configs.DatabseConfig) {
+func Connect(config *configs.DatabaseConfig) {
 	var err error
 
-	Client, err = gorm.Open(connector(config), &gorm.Config{
+	DB, err = gorm.Open(connector(config), &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 	})
@@ -26,11 +26,11 @@ func Connect(config *configs.DatabseConfig) {
 		log.Fatalf("Failed to connect to database %v", err)
 	}
 
-	Client.AutoMigrate(&models.Database{})
+	DB.AutoMigrate(&models.Database{})
 }
 
 // build connection dialect object from config
-func connector(config *configs.DatabseConfig) gorm.Dialector {
+func connector(config *configs.DatabaseConfig) gorm.Dialector {
 	var conn gorm.Dialector
 
 	switch config.Type {
@@ -46,7 +46,7 @@ func connector(config *configs.DatabseConfig) gorm.Dialector {
 }
 
 // set postgres connection string and return conn object
-func postgresConnector(config *configs.DatabseConfig) gorm.Dialector {
+func postgresConnector(config *configs.DatabaseConfig) gorm.Dialector {
 	dsn := fmt.Sprintf(
 		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
 		config.Host,
@@ -59,6 +59,6 @@ func postgresConnector(config *configs.DatabseConfig) gorm.Dialector {
 }
 
 // set sqlite connetion string and return conn object
-func sqliteConnector(config *configs.DatabseConfig) gorm.Dialector {
+func sqliteConnector(config *configs.DatabaseConfig) gorm.Dialector {
 	return sqlite.Open(config.DbName)
 }

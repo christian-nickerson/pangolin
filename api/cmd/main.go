@@ -21,7 +21,7 @@ func main() {
 	settings := configs.Load("settings.toml")
 
 	// connect to services
-	databases.Connect(&settings.Database)
+	databases.Connect(&settings.Metadata.Database)
 
 	// set up fiber app
 	app := fiber.New(fiber.Config{
