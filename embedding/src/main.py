@@ -1,8 +1,8 @@
-import proto.transformers_pb2_grpc as transformers
+import proto.embedding_pb2_grpc as embeddings
 from config import settings
 from logger import create_logger
+from service.models import EmbeddingsService
 from service.server import Server
-from service.transformers import SentenceTransformersService
 
 
 def add_services(server: Server) -> None:
@@ -10,9 +10,7 @@ def add_services(server: Server) -> None:
 
     :param server: server instance to add services to
     """
-    transformers.add_SentenceTransformersServicer_to_server(
-        SentenceTransformersService(settings.transformers.model_list), server.instance
-    )
+    embeddings.add_EmbeddingsServicer_to_server(EmbeddingsService(settings.transformers.model_list), server.instance)
 
 
 if __name__ == "__main__":

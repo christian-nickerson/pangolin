@@ -5,28 +5,29 @@ import warnings
 
 from . import embedding_pb2 as embedding__pb2
 
-GRPC_GENERATED_VERSION = '1.65.4'
+GRPC_GENERATED_VERSION = "1.65.4"
 GRPC_VERSION = grpc.__version__
-EXPECTED_ERROR_RELEASE = '1.66.0'
-SCHEDULED_RELEASE_DATE = 'August 6, 2024'
+EXPECTED_ERROR_RELEASE = "1.66.0"
+SCHEDULED_RELEASE_DATE = "August 6, 2024"
 _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
+
     _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
 except ImportError:
     _version_not_supported = True
 
 if _version_not_supported:
     warnings.warn(
-        f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in embedding_pb2_grpc.py depends on'
-        + f' grpcio>={GRPC_GENERATED_VERSION}.'
-        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
-        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
-        + f' This warning will become an error in {EXPECTED_ERROR_RELEASE},'
-        + f' scheduled for release on {SCHEDULED_RELEASE_DATE}.',
-        RuntimeWarning
+        f"The grpc package installed is at version {GRPC_VERSION},"
+        + f" but the generated code in embedding_pb2_grpc.py depends on"
+        + f" grpcio>={GRPC_GENERATED_VERSION}."
+        + f" Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}"
+        + f" or downgrade your generated code using grpcio-tools<={GRPC_VERSION}."
+        + f" This warning will become an error in {EXPECTED_ERROR_RELEASE},"
+        + f" scheduled for release on {SCHEDULED_RELEASE_DATE}.",
+        RuntimeWarning,
     )
 
 
@@ -40,73 +41,74 @@ class EmbeddingsStub(object):
             channel: A grpc.Channel.
         """
         self.Inference = channel.unary_unary(
-                '/EmbeddingsService.Embeddings/Inference',
-                request_serializer=embedding__pb2.InferenceRequest.SerializeToString,
-                response_deserializer=embedding__pb2.InferenceResponse.FromString,
-                _registered_method=True)
+            "/EmbeddingsService.Embeddings/Inference",
+            request_serializer=embedding__pb2.InferenceRequest.SerializeToString,
+            response_deserializer=embedding__pb2.InferenceResponse.FromString,
+            _registered_method=True,
+        )
         self.ModelList = channel.unary_unary(
-                '/EmbeddingsService.Embeddings/ModelList',
-                request_serializer=embedding__pb2.ModelListRequest.SerializeToString,
-                response_deserializer=embedding__pb2.ModelListResponse.FromString,
-                _registered_method=True)
+            "/EmbeddingsService.Embeddings/ModelList",
+            request_serializer=embedding__pb2.ModelListRequest.SerializeToString,
+            response_deserializer=embedding__pb2.ModelListResponse.FromString,
+            _registered_method=True,
+        )
 
 
 class EmbeddingsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Inference(self, request, context):
-        """Inference an embedding model
-        """
+        """Inference an embedding model"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def ModelList(self, request, context):
-        """Model list
-        """
+        """Model list"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_EmbeddingsServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Inference': grpc.unary_unary_rpc_method_handler(
-                    servicer.Inference,
-                    request_deserializer=embedding__pb2.InferenceRequest.FromString,
-                    response_serializer=embedding__pb2.InferenceResponse.SerializeToString,
-            ),
-            'ModelList': grpc.unary_unary_rpc_method_handler(
-                    servicer.ModelList,
-                    request_deserializer=embedding__pb2.ModelListRequest.FromString,
-                    response_serializer=embedding__pb2.ModelListResponse.SerializeToString,
-            ),
+        "Inference": grpc.unary_unary_rpc_method_handler(
+            servicer.Inference,
+            request_deserializer=embedding__pb2.InferenceRequest.FromString,
+            response_serializer=embedding__pb2.InferenceResponse.SerializeToString,
+        ),
+        "ModelList": grpc.unary_unary_rpc_method_handler(
+            servicer.ModelList,
+            request_deserializer=embedding__pb2.ModelListRequest.FromString,
+            response_serializer=embedding__pb2.ModelListResponse.SerializeToString,
+        ),
     }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'EmbeddingsService.Embeddings', rpc_method_handlers)
+    generic_handler = grpc.method_handlers_generic_handler("EmbeddingsService.Embeddings", rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('EmbeddingsService.Embeddings', rpc_method_handlers)
+    server.add_registered_method_handlers("EmbeddingsService.Embeddings", rpc_method_handlers)
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Embeddings(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Inference(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def Inference(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/EmbeddingsService.Embeddings/Inference',
+            "/EmbeddingsService.Embeddings/Inference",
             embedding__pb2.InferenceRequest.SerializeToString,
             embedding__pb2.InferenceResponse.FromString,
             options,
@@ -117,23 +119,26 @@ class Embeddings(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def ModelList(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def ModelList(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/EmbeddingsService.Embeddings/ModelList',
+            "/EmbeddingsService.Embeddings/ModelList",
             embedding__pb2.ModelListRequest.SerializeToString,
             embedding__pb2.ModelListResponse.FromString,
             options,
@@ -144,4 +149,5 @@ class Embeddings(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
