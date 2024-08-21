@@ -30,10 +30,10 @@ type PaginationResponse struct {
 func ValidatePagination(c *fiber.Ctx) error {
 	var errors []*IError
 
-	body := new(PaginationRequest)
-	c.QueryParser(&body)
+	pagination := new(PaginationRequest)
+	c.QueryParser(&pagination)
 
-	err := Validator.Struct(body)
+	err := Validator.Struct(pagination)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			var el IError

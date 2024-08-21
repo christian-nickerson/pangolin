@@ -1,9 +1,6 @@
 package v1
 
 import (
-	"encoding/base64"
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
@@ -15,10 +12,10 @@ func AddDatabaseRoutes(route fiber.Router) {
 	group := route.Group("/databases")
 
 	group.Get("", models.ValidatePagination, GetDatabases)
-	group.Get("/:databaseId", GetDatabase)
-	group.Post("", CreateDatabase)
-	group.Patch("/:databaseId", UpdateDatabase)
-	group.Delete("/:databaseId", DeleteDatabase)
+	group.Get("/:id", GetDatabase)
+	group.Post("", models.ValidateDatabase, CreateDatabase)
+	group.Patch("/:id", models.ValidateDatabase, UpdateDatabase)
+	group.Delete("/:id", DeleteDatabase)
 }
 
 // return paginated databse records
@@ -28,10 +25,7 @@ func GetDatabases(c *fiber.Ctx) error {
 
 	c.QueryParser(&pagination)
 	databases.DB.Scopes(databases.Paginate(&pagination)).Find(&dbRecords)
-
-	n1 := dbRecords[len(dbRecords)-1]
-	idByteString := []byte(strconv.FormatUint(uint64(n1.ID), 10))
-	nextToken := base64.StdEncoding.EncodeToString(idByteString)
+	nextToken := databases.GetContinuationToken(dbRecords)
 
 	response := models.DatabaseResponse{
 		Databases: dbRecords[:len(dbRecords)-1],
@@ -45,9 +39,10 @@ func GetDatabases(c *fiber.Ctx) error {
 
 // return a specific database record
 func GetDatabase(c *fiber.Ctx) error {
-	id := c.Params("databaseId")
+	id := c.Params("id")
 	var dbRecords models.Database
 
+	// TODO: add where statement to correct IDs
 	result := databases.DB.Find(&dbRecords, id)
 	if result.RowsAffected == 0 {
 		return c.Status(404).SendString("Couldn't find database record")
@@ -71,13 +66,13 @@ func CreateDatabase(c *fiber.Ctx) error {
 // update an existing database record
 func UpdateDatabase(c *fiber.Ctx) error {
 	dbRecord := new(models.Database)
-	id := c.Params("databaseId")
+	id := c.Params("id")
 
 	if err := c.BodyParser(dbRecord); err != nil {
 		return c.Status(422).SendString(err.Error())
 	}
 
-	result := databases.DB.Where("ID = ?", id).Updates(&dbRecord)
+	result := databases.DB.Where("id = ?", id).Updates(&dbRecord)
 	if result.RowsAffected == 0 {
 		return c.Status(404).SendString("Couldn't find database record")
 	}
@@ -87,7 +82,7 @@ func UpdateDatabase(c *fiber.Ctx) error {
 
 // delete a database record
 func DeleteDatabase(c *fiber.Ctx) error {
-	id := c.Params("databaseId")
+	id := c.Params("id")
 	var dbRecord models.Database
 
 	result := databases.DB.Delete(&dbRecord, id)
