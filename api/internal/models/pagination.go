@@ -31,7 +31,9 @@ func ValidatePagination(c *fiber.Ctx) error {
 	var errors []*IError
 
 	pagination := new(PaginationRequest)
-	c.QueryParser(&pagination)
+	if err := c.QueryParser(&pagination); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+	}
 
 	err := Validator.Struct(pagination)
 	if err != nil {

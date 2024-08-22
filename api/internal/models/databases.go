@@ -29,7 +29,9 @@ func ValidateDatabase(c *fiber.Ctx) error {
 	var errors []*IError
 
 	body := new(Database)
-	c.BodyParser(&body)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+	}
 
 	err := Validator.Struct(body)
 	if err != nil {
@@ -40,7 +42,7 @@ func ValidateDatabase(c *fiber.Ctx) error {
 			el.Value = err.Param()
 			errors = append(errors, &el)
 		}
-		return c.Status(fiber.StatusBadRequest).JSON(errors)
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(errors)
 	}
 	return c.Next()
 }

@@ -33,5 +33,5 @@ repos:
     rev: v0.5.1
     hooks:
       - id: go-fmt
-      # - id: golangci-lint
+      - id: golangci-lint
       - id: go-unit-tests

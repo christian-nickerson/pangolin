@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/goccy/go-json"
@@ -38,5 +39,5 @@ func main() {
 	v1.AddV1Routes(app)
 
 	// start serving
-	app.Listen(":" + strconv.Itoa(settings.Server.API.Port))
+	log.Fatal(app.Listen(":" + strconv.Itoa(settings.Server.API.Port)))
 }

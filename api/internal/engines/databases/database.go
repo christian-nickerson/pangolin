@@ -21,12 +21,13 @@ func Connect(config *configs.DatabaseConfig) {
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 	})
-
 	if err != nil {
 		log.Fatalf("Failed to connect to database %v", err)
 	}
 
-	DB.AutoMigrate(&models.Database{})
+	if err := DB.AutoMigrate(&models.Database{}); err != nil {
+		log.Fatal("Failed to create database model")
+	}
 }
 
 // build connection dialect object from config

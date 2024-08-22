@@ -23,7 +23,10 @@ func GetDatabases(c *fiber.Ctx) error {
 	var pagination models.PaginationRequest
 	var dbRecords []models.Database
 
-	c.QueryParser(&pagination)
+	if err := c.QueryParser(&pagination); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+	}
+
 	databases.DB.Scopes(databases.Paginate(&pagination)).Find(&dbRecords)
 	nextToken := databases.GetContinuationToken(dbRecords)
 
@@ -34,7 +37,7 @@ func GetDatabases(c *fiber.Ctx) error {
 		},
 	}
 
-	return c.Status(200).JSON(response)
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 // return a specific database record
@@ -45,10 +48,10 @@ func GetDatabase(c *fiber.Ctx) error {
 	// TODO: add where statement to correct IDs
 	result := databases.DB.Find(&dbRecords, id)
 	if result.RowsAffected == 0 {
-		return c.Status(404).SendString("Couldn't find database record")
+		return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
 	}
 
-	return c.Status(200).JSON(dbRecords)
+	return c.Status(fiber.StatusOK).JSON(dbRecords)
 }
 
 // create new database record
@@ -56,11 +59,11 @@ func CreateDatabase(c *fiber.Ctx) error {
 	dbRecord := new(models.Database)
 
 	if err := c.BodyParser(dbRecord); err != nil {
-		return c.Status(422).SendString(err.Error())
+		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
 
 	databases.DB.Create(&dbRecord)
-	return c.SendStatus(201)
+	return c.SendStatus(fiber.StatusCreated)
 }
 
 // update an existing database record
@@ -69,15 +72,15 @@ func UpdateDatabase(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := c.BodyParser(dbRecord); err != nil {
-		return c.Status(422).SendString(err.Error())
+		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
 
 	result := databases.DB.Where("id = ?", id).Updates(&dbRecord)
 	if result.RowsAffected == 0 {
-		return c.Status(404).SendString("Couldn't find database record")
+		return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
 	}
 
-	return c.SendStatus(200)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 // delete a database record
@@ -87,8 +90,8 @@ func DeleteDatabase(c *fiber.Ctx) error {
 
 	result := databases.DB.Delete(&dbRecord, id)
 	if result.RowsAffected == 0 {
-		return c.Status(404).SendString("Couldn't find database record")
+		return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
 	}
 
-	return c.SendStatus(200)
+	return c.SendStatus(fiber.StatusOK)
 }
