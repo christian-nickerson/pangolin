@@ -6,31 +6,41 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-// Test health endpoint returns correctly
-func TestHealthEndpoint(t *testing.T) {
-	// setup app
-	app := fiber.New()
-	app.Use(healthcheck.New(HealthCheckConfig))
+type HealthCheckSuite struct {
+	suite.Suite
+	app *fiber.App
+}
 
-	// test request
-	request := httptest.NewRequest("GET", "/health", nil)
-	response, _ := app.Test(request)
+// set up app
+func (s *HealthCheckSuite) SetupTest() {
+	s.app = fiber.New()
+	s.app.Use(healthcheck.New(HealthCheckConfig))
+}
 
-	assert.Equal(t, 200, response.StatusCode)
+// shutdown app
+func (s *HealthCheckSuite) TearDownTest() {
+	s.app.Shutdown()
 }
 
 // Test health endpoint returns correctly
-func TestReadyEndpoint(t *testing.T) {
-	// setup app
-	app := fiber.New()
-	app.Use(healthcheck.New(HealthCheckConfig))
+func (s *HealthCheckSuite) TestHealthEndpoint() {
+	request := httptest.NewRequest("GET", "/health", nil)
+	response, _ := s.app.Test(request)
 
-	// test request
+	s.Assert().Equal(200, response.StatusCode)
+}
+
+// Test health endpoint returns correctly
+func (s *HealthCheckSuite) TestReadyEndpoint() {
 	request := httptest.NewRequest("GET", "/ready", nil)
-	response, _ := app.Test(request)
+	response, _ := s.app.Test(request)
 
-	assert.Equal(t, 200, response.StatusCode)
+	s.Assert().Equal(200, response.StatusCode)
+}
+
+func TestHealthCheckSuite(t *testing.T) {
+	suite.Run(t, new(HealthCheckSuite))
 }
