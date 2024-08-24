@@ -18,7 +18,7 @@ func AddDatabaseRoutes(route fiber.Router) {
 	group.Delete("/:id", DeleteDatabase)
 }
 
-// return paginated databse records
+// return paginated database records
 func GetDatabases(c *fiber.Ctx) error {
 	var pagination models.PaginationRequest
 	var dbRecords []models.Database

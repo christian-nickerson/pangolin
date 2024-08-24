@@ -8,4 +8,5 @@ func AddV1Routes(router fiber.Router) {
 
 	AddDatabaseRoutes(v1)
 	AddCollectionRoutes(v1)
+	AddDocumentsRoutes(v1)
 }
