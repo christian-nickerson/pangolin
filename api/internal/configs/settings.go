@@ -1,7 +1,7 @@
 package configs
 
 import (
-	"log"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -40,7 +40,9 @@ type DatabaseConfig struct {
 
 // Load reads configurations from a toml file or environment variables
 // and returns a Settings struct of all setting variables
-func Load(fileName string) (settings Settings) {
+func Load(fileName string) (Settings, error) {
+	var settings Settings
+
 	// find settings in configs or root
 	viper.AddConfigPath("./internal/configs")
 	viper.AddConfigPath(".")
@@ -56,22 +58,22 @@ func Load(fileName string) (settings Settings) {
 	viper.SetConfigType(fileType)
 	viper.AutomaticEnv()
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal("Loading settings failed", err)
+	// read and load settings file
+	if err := viper.ReadInConfig(); err != nil {
+		return settings, fmt.Errorf("unable to read settings file, %v", err)
 	}
 
-	err = viper.Unmarshal(&settings)
-	if err != nil {
-		log.Fatal("Failed to fit file to settings:", err)
+	if err := viper.Unmarshal(&settings); err != nil {
+		return settings, fmt.Errorf("unable to load settings file, %v", err)
 	}
-	return
+
+	return settings, nil
 }
 
 // take a file name and return the base name and file type from extension
-func fileNameSplit(fileName string) (fileBase string, fileType string) {
+func fileNameSplit(fileName string) (string, string) {
 	fileExtension := filepath.Ext(fileName)
-	fileType = strings.Trim(fileExtension, ".")
-	fileBase = strings.TrimSuffix(fileName, fileExtension)
-	return
+	fileType := strings.Trim(fileExtension, ".")
+	fileBase := strings.TrimSuffix(fileName, fileExtension)
+	return fileBase, fileType
 }

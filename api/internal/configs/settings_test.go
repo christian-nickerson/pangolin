@@ -11,7 +11,8 @@ import (
 // test load config can read the default toml file
 // and has required default values
 func TestLoadSettings(t *testing.T) {
-	settings := Load("settings.toml")
+	settings, err := Load("settings.toml")
+	assert.NoError(t, err, nil, "failed to load setings file")
 
 	// server.embeddings
 	assert.NotEqual(t, settings.Server.Embeddings.Name, "", "server.embeddings.name should have a default value")
@@ -26,7 +27,8 @@ func TestLoadSettings(t *testing.T) {
 func TestSettingsOverride(t *testing.T) {
 	os.Setenv("PANGOLIN_SERVER__EMBEDDINGS__NAME", "test")
 	os.Setenv("PANGOLIN_SERVER__EMBEDDINGS__PORT", "455")
-	settings := Load("settings.toml")
+	settings, err := Load("settings.toml")
+	assert.NoError(t, err, nil, "failed to load setings file")
 
 	// assert overrides
 	assert.Equal(t, settings.Server.Embeddings.Name, "test")

@@ -2,7 +2,6 @@ package databases
 
 import (
 	"fmt"
-	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -14,25 +13,46 @@ import (
 
 var DB *gorm.DB
 
-func Connect(config *configs.DatabaseConfig) {
-	var err error
+// connect to databases
+func Connect(config *configs.DatabaseConfig) error {
+	connection, err := connector(config)
+	if err != nil {
+		return err
+	}
 
-	DB, err = gorm.Open(connector(config), &gorm.Config{
+	DB, err := gorm.Open(connection, &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 	})
+
 	if err != nil {
-		log.Fatalf("Failed to connect to database %v", err)
+		return fmt.Errorf("failure connecting to database, %v", err)
 	}
 
-	if err := DB.AutoMigrate(&models.Database{}); err != nil {
-		log.Fatal("Failed to create database model")
+	if err = DB.AutoMigrate(&models.Database{}); err != nil {
+		return fmt.Errorf("failure creating Database schema, %v", err)
 	}
+
+	return err
+}
+
+func Close() error {
+	instance, err := DB.DB()
+	if err != nil {
+		return fmt.Errorf("failure returning DB instance, %v", err)
+	}
+
+	if err = instance.Close(); err != nil {
+		return fmt.Errorf("failure closing connection, %v", err)
+	}
+
+	return nil
 }
 
 // build connection dialect object from config
-func connector(config *configs.DatabaseConfig) gorm.Dialector {
+func connector(config *configs.DatabaseConfig) (gorm.Dialector, error) {
 	var conn gorm.Dialector
+	var err error = nil
 
 	switch config.Type {
 	case "postgres":
@@ -40,10 +60,10 @@ func connector(config *configs.DatabaseConfig) gorm.Dialector {
 	case "sqlite":
 		conn = sqliteConnector(config)
 	default:
-		log.Fatalf("Database %v is unsupported", config.Type)
+		err = fmt.Errorf("database %v is unsupported", config.Type)
 	}
 
-	return conn
+	return conn, err
 }
 
 // set postgres connection string and return conn object
