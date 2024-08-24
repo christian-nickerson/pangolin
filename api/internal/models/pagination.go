@@ -9,9 +9,9 @@ import (
 )
 
 type PaginationRequest struct {
-	ContinuationToken string `query:"continuationToken" validate:"base64"`
+	ContinuationToken string `query:"continuationToken" validate:"omitempty,base64"`
 	PageSize          int    `query:"pageSize" validate:"required,min=5,max=100"`
-	OrderDesc         bool   `query:"orderDesc" validate:"bool"`
+	OrderDesc         bool   `query:"orderDesc" validate:"boolean"`
 }
 
 func (p *PaginationRequest) DecodeToken() (uint64, error) {
@@ -22,15 +22,15 @@ func (p *PaginationRequest) DecodeToken() (uint64, error) {
 
 type PaginationResponse struct {
 	ContinuationToken string `json:"continuationToken"`
-	// TotalRecords      int
-	// TotalPages        int
+	TotalRecords      int64  `json:"totalRecords"`
+	TotalPages        int64  `json:"totalPages"`
 }
 
 // Validate pagination parameters
 func ValidatePagination(c *fiber.Ctx) error {
 	var errors []*IError
+	var pagination PaginationRequest
 
-	pagination := new(PaginationRequest)
 	if err := c.QueryParser(&pagination); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
@@ -44,7 +44,7 @@ func ValidatePagination(c *fiber.Ctx) error {
 			el.Value = err.Param()
 			errors = append(errors, &el)
 		}
-		return c.Status(fiber.StatusBadRequest).JSON(errors)
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(errors)
 	}
 	return c.Next()
 }

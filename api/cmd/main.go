@@ -50,33 +50,31 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	// Load settings
+	// Load dependent objects
 	settings, err := configs.Load("settings.toml")
 	if err != nil {
-		log.Fatalf("Settings failure: %v", err)
+		log.Fatal(err.Error())
 	}
 
-	// Connect to metadata DB
 	if err := databases.Connect(&settings.Metadata.Database); err != nil {
-		log.Fatalf("Metadata database failure: %v", err)
+		log.Fatal(err.Error())
 	}
 
 	// start service
 	app, err := startService(&settings)
 	if err != nil {
-		log.Fatalf("Service startup failure: %v\n", err)
+		log.Fatal(err.Error())
 	}
 
 	log.Printf("Started serving on http://127.0.0.1:%v\n", settings.Server.API.Port)
-
-	// enter graceful shutdown
 	<-ctx.Done()
 
+	// enter graceful shutdown
 	if err := app.Shutdown(); err != nil {
-		log.Fatalf("Service shutdown failure: %v\n", err)
+		log.Fatal(err.Error())
 	}
 
 	if err := databases.Close(); err != nil {
-		log.Fatalf("Metadata database closing failure: %v\n", err)
+		log.Fatal(err.Error())
 	}
 }

@@ -15,12 +15,14 @@ var DB *gorm.DB
 
 // connect to databases
 func Connect(config *configs.DatabaseConfig) error {
+	var err error
+
 	connection, err := connector(config)
 	if err != nil {
 		return err
 	}
 
-	DB, err := gorm.Open(connection, &gorm.Config{
+	DB, err = gorm.Open(connection, &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 	})
@@ -81,5 +83,6 @@ func postgresConnector(config *configs.DatabaseConfig) gorm.Dialector {
 
 // set sqlite connetion string and return conn object
 func sqliteConnector(config *configs.DatabaseConfig) gorm.Dialector {
-	return sqlite.Open(config.DbName)
+	fileName := fmt.Sprintf("%v.db", config.DbName)
+	return sqlite.Open(fileName)
 }

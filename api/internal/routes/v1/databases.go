@@ -20,21 +20,29 @@ func AddDatabaseRoutes(route fiber.Router) {
 
 // return paginated database records
 func GetDatabases(c *fiber.Ctx) error {
-	var pagination models.PaginationRequest
+	var paginationRequest models.PaginationRequest
+	var PaginationResponse models.PaginationResponse
 	var dbRecords []models.Database
 
-	if err := c.QueryParser(&pagination); err != nil {
+	if err := c.QueryParser(&paginationRequest); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
 
-	databases.DB.Scopes(databases.Paginate(&pagination)).Find(&dbRecords)
-	nextToken := databases.GetContinuationToken(dbRecords)
+	if result := databases.DB.Scopes(
+		databases.Paginate(
+			dbRecords,
+			&paginationRequest,
+			&PaginationResponse,
+			databases.DB,
+		),
+	).Find(&dbRecords); result.RowsAffected == 0 {
+		return c.Status(fiber.StatusNoContent).SendString("No records found")
+	}
 
+	PaginationResponse.ContinuationToken = databases.GetContinuationToken(dbRecords)
 	response := models.DatabaseResponse{
-		Databases: dbRecords[:len(dbRecords)-1],
-		PaginationResponse: models.PaginationResponse{
-			ContinuationToken: nextToken,
-		},
+		Data:               dbRecords[:len(dbRecords)-1],
+		PaginationResponse: PaginationResponse,
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)

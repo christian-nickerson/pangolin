@@ -3,9 +3,10 @@ package models
 import (
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
 type Database struct {
@@ -20,15 +21,15 @@ type Database struct {
 func (d Database) GetID() uint { return d.ID }
 
 type DatabaseResponse struct {
+	Data []Database
 	PaginationResponse
-	Databases []Database
 }
 
 // Validate database body
 func ValidateDatabase(c *fiber.Ctx) error {
 	var errors []*IError
+	var body Database
 
-	body := new(Database)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
