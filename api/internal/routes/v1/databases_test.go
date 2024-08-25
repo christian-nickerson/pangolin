@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -127,6 +128,59 @@ func (s *DatabaseEndpointsSuite) TestGetDatabaseNotFound() {
 	response, _ := s.app.Test(request)
 
 	s.Assert().Equal(404, response.StatusCode)
+}
+
+// Test create database
+func (s *DatabaseEndpointsSuite) TestCreateDatabase() {
+	var result models.Database
+	var record models.Database
+
+	reqBody := map[string]interface{}{
+		"name":        "new database",
+		"description": "a new testing databaase",
+	}
+
+	jsonBody, _ := json.Marshal(reqBody)
+	request := httptest.NewRequest("POST", "/databases", bytes.NewReader(jsonBody))
+	request.Header.Add("Content-Type", "application/json")
+	response, _ := s.app.Test(request)
+
+	defer response.Body.Close()
+	respBody, _ := io.ReadAll(response.Body)
+	json.Unmarshal(respBody, &result)
+
+	databases.DB.Where("description == ?", reqBody["description"]).Find(&record)
+
+	s.Assert().Equal(201, response.StatusCode)
+	s.Assert().Equal(reqBody["name"], result.Name)
+	s.Assert().Equal(reqBody["description"], record.Description)
+}
+
+// Test create database returns 422 with wrong body
+func (s *DatabaseEndpointsSuite) TestCreateDatabaseUnprocessible() {
+	reqBody := map[string]interface{}{
+		"name":        "new database",
+		"description": 12345,
+	}
+
+	jsonBody, _ := json.Marshal(reqBody)
+	request := httptest.NewRequest("POST", "/databases", bytes.NewReader(jsonBody))
+	request.Header.Add("Content-Type", "application/json")
+	response, _ := s.app.Test(request)
+
+	s.Assert().Equal(422, response.StatusCode)
+}
+
+// Test create database returns 409 with non-unique name
+func (s *DatabaseEndpointsSuite) TestCreateDatabaseDuplicateName() {
+	reqBody := map[string]interface{}{"name": "test1"}
+
+	jsonBody, _ := json.Marshal(reqBody)
+	request := httptest.NewRequest("POST", "/databases", bytes.NewReader(jsonBody))
+	request.Header.Add("Content-Type", "application/json")
+	response, _ := s.app.Test(request)
+
+	s.Assert().Equal(409, response.StatusCode)
 }
 
 func TestDatabaseEndpointsSuite(t *testing.T) {

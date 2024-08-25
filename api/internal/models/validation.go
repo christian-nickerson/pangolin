@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -28,7 +26,6 @@ func ValidateQueries(queryStruct interface{}) func(c *fiber.Ctx) error {
 
 		if err := Validator.Struct(queryStruct); err != nil {
 			for _, err := range err.(validator.ValidationErrors) {
-				fmt.Println(err)
 				var el IError
 				el.Field = err.Field()
 				el.Tag = err.Tag()

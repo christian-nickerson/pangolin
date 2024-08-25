@@ -71,12 +71,15 @@ func CreateDatabase() func(c *fiber.Ctx) error {
 
 	return func(c *fiber.Ctx) error {
 
-		if err := c.BodyParser(record); err != nil {
+		if err := c.BodyParser(&record); err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 		}
 
-		databases.DB.Create(&record)
-		return c.SendStatus(fiber.StatusCreated)
+		if result := databases.DB.Create(&record); result.RowsAffected == 0 {
+			return c.Status(fiber.StatusConflict).SendString("Database already exists")
+		}
+
+		return c.Status(fiber.StatusCreated).JSON(record)
 	}
 }
 

@@ -7,9 +7,9 @@ import (
 )
 
 type Database struct {
-	ID          uint64         `json:"id" gorm:"primaryKey;autoIncrement;unique"`
+	ID          uint64         `json:"id" gorm:"primaryKey;autoIncrement"`
 	Name        string         `json:"name" gorm:"unique" validate:"required"`
-	Description *string        `json:"description"`
+	Description string         `json:"description"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
