@@ -10,6 +10,7 @@ import (
 // add database routes to a fiber app
 func AddDatabaseRoutes(route fiber.Router) {
 	group := route.Group("/databases")
+
 	group.Get("", models.ValidateQueries(&models.PaginationRequest{}), GetDatabases())
 	group.Get("/:id", GetDatabase())
 	group.Post("", models.ValidateBody(&models.Database{}), CreateDatabase())

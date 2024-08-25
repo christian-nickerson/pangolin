@@ -107,6 +107,28 @@ func (s *DatabaseEndpointsSuite) TestGetDatabasesNoRecords() {
 	s.Assert().Equal(204, response.StatusCode)
 }
 
+// Test get database returns correctly
+func (s *DatabaseEndpointsSuite) TestGetDatabase() {
+	var result models.Database
+
+	request := httptest.NewRequest("GET", fmt.Sprintf("/databases/%v", 1), nil)
+	response, _ := s.app.Test(request)
+	defer response.Body.Close()
+	body, _ := io.ReadAll(response.Body)
+	json.Unmarshal(body, &result)
+
+	s.Assert().Equal(200, response.StatusCode)
+	s.Assert().Equal(result.Name, "test0")
+}
+
+// Test get database returns 404
+func (s *DatabaseEndpointsSuite) TestGetDatabaseNotFound() {
+	request := httptest.NewRequest("GET", fmt.Sprintf("/databases/%v", 100), nil)
+	response, _ := s.app.Test(request)
+
+	s.Assert().Equal(404, response.StatusCode)
+}
+
 func TestDatabaseEndpointsSuite(t *testing.T) {
 	suite.Run(t, new(DatabaseEndpointsSuite))
 }
