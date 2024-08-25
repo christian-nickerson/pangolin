@@ -3,9 +3,6 @@ package models
 import (
 	"encoding/base64"
 	"encoding/binary"
-
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 )
 
 type PaginationRequest struct {
@@ -26,27 +23,4 @@ type PaginationResponse struct {
 	ContinuationToken string `json:"continuationToken"`
 	TotalRecords      int64  `json:"totalRecords"`
 	TotalPages        int64  `json:"totalPages"`
-}
-
-// Validate pagination parameters
-func ValidatePagination(c *fiber.Ctx) error {
-	var errors []*IError
-	var pagination PaginationRequest
-
-	if err := c.QueryParser(&pagination); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
-	}
-
-	err := Validator.Struct(pagination)
-	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			var el IError
-			el.Field = err.Field()
-			el.Tag = err.Tag()
-			el.Value = err.Param()
-			errors = append(errors, &el)
-		}
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(errors)
-	}
-	return c.Next()
 }
