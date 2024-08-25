@@ -7,6 +7,10 @@ import (
 	"github.com/christian-nickerson/pangolin/api/internal/models"
 )
 
+var notFound string = "Couldn't find database record"
+var noRecords string = "No records found"
+var alreadyExists string = "Database already exists"
+
 // add database routes to a fiber app
 func AddDatabaseRoutes(route fiber.Router) {
 	group := route.Group("/databases")
@@ -34,7 +38,7 @@ func GetDatabases() func(c *fiber.Ctx) error {
 		if result := databases.DB.Scopes(
 			databases.Paginate(records, &prq, &prp, databases.DB),
 		).Find(&records); result.RowsAffected == 0 {
-			return c.Status(fiber.StatusNoContent).SendString("No records found")
+			return c.Status(fiber.StatusNoContent).SendString(noRecords)
 		}
 
 		records, prp.ContinuationToken = databases.PaginatedResponse(records, prq.PageSize)
@@ -57,7 +61,7 @@ func GetDatabase() func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		result := databases.DB.Find(&record, id)
 		if result.RowsAffected == 0 {
-			return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+			return c.Status(fiber.StatusNotFound).SendString(notFound)
 		}
 
 		return c.Status(fiber.StatusOK).JSON(record)
@@ -76,7 +80,7 @@ func CreateDatabase() func(c *fiber.Ctx) error {
 		}
 
 		if result := databases.DB.Create(&record); result.RowsAffected == 0 {
-			return c.Status(fiber.StatusConflict).SendString("Database already exists")
+			return c.Status(fiber.StatusConflict).SendString(alreadyExists)
 		}
 
 		return c.Status(fiber.StatusCreated).JSON(record)
@@ -90,17 +94,18 @@ func UpdateDatabase() func(c *fiber.Ctx) error {
 
 	return func(c *fiber.Ctx) error {
 
-		if err := c.BodyParser(record); err != nil {
+		if err := c.BodyParser(&record); err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 		}
 
 		id := c.Params("id")
 		result := databases.DB.Where("id = ?", id).Updates(&record)
 		if result.RowsAffected == 0 {
-			return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+			return c.Status(fiber.StatusNotFound).SendString(notFound)
 		}
 
-		return c.SendStatus(fiber.StatusOK)
+		databases.DB.Find(&record, id)
+		return c.Status(fiber.StatusOK).JSON(record)
 	}
 }
 
@@ -114,7 +119,7 @@ func DeleteDatabase() func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		result := databases.DB.Delete(&dbRecord, id)
 		if result.RowsAffected == 0 {
-			return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+			return c.Status(fiber.StatusNotFound).SendString(notFound)
 		}
 
 		return c.SendStatus(fiber.StatusOK)

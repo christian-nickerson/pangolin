@@ -183,6 +183,59 @@ func (s *DatabaseEndpointsSuite) TestCreateDatabaseDuplicateName() {
 	s.Assert().Equal(409, response.StatusCode)
 }
 
+// Test update database
+func (s *DatabaseEndpointsSuite) TestUpdateDatabase() {
+	var result models.Database
+	var record models.Database
+
+	reqBody := map[string]interface{}{
+		"name": "new database",
+	}
+
+	jsonBody, _ := json.Marshal(reqBody)
+	request := httptest.NewRequest("PATCH", "/databases/1", bytes.NewReader(jsonBody))
+	request.Header.Add("Content-Type", "application/json")
+	response, _ := s.app.Test(request)
+
+	defer response.Body.Close()
+	respBody, _ := io.ReadAll(response.Body)
+	json.Unmarshal(respBody, &result)
+
+	databases.DB.Where("id == ?", result.ID).Find(&record)
+
+	s.Assert().Equal(200, response.StatusCode)
+	s.Assert().Equal(reqBody["name"], result.Name)
+	s.Assert().Equal(reqBody["name"], record.Name)
+}
+
+// Test update database returns 404
+func (s *DatabaseEndpointsSuite) TestUpdateDatabasenotFound() {
+	reqBody := map[string]interface{}{
+		"name": "new database",
+	}
+
+	jsonBody, _ := json.Marshal(reqBody)
+	request := httptest.NewRequest("PATCH", "/databases/100", bytes.NewReader(jsonBody))
+	request.Header.Add("Content-Type", "application/json")
+	response, _ := s.app.Test(request)
+
+	s.Assert().Equal(404, response.StatusCode)
+}
+
+// Test update database returns 422
+func (s *DatabaseEndpointsSuite) TestUpdateDatabaseUnprocessible() {
+	reqBody := map[string]interface{}{
+		"name": 12345,
+	}
+
+	jsonBody, _ := json.Marshal(reqBody)
+	request := httptest.NewRequest("PATCH", "/databases/1", bytes.NewReader(jsonBody))
+	request.Header.Add("Content-Type", "application/json")
+	response, _ := s.app.Test(request)
+
+	s.Assert().Equal(422, response.StatusCode)
+}
+
 func TestDatabaseEndpointsSuite(t *testing.T) {
 	suite.Run(t, new(DatabaseEndpointsSuite))
 }
