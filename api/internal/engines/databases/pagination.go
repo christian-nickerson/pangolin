@@ -2,8 +2,8 @@ package databases
 
 import (
 	"encoding/base64"
+	"encoding/binary"
 	"math"
-	"strconv"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -30,7 +30,7 @@ func Paginate(
 		// set up base query without cursor token
 		query := db.Limit(rq.PageSize + 1).Order(clause.OrderByColumn{
 			Column: clause.Column{Name: "id"},
-			Desc:   rq.OrderDesc,
+			Desc:   true,
 		})
 
 		if rq.ContinuationToken != "" {
@@ -43,10 +43,22 @@ func Paginate(
 	}
 }
 
-// Get next continuation token from pagination results
-func GetContinuationToken[T models.IDGetter](records []T) string {
-	// fetch last record from paginated limit + 1 records
-	lastRecord := records[len(records)-1]
-	idByteString := []byte(strconv.FormatUint(uint64(lastRecord.GetID()), 10))
-	return base64.StdEncoding.EncodeToString(idByteString)
+// Process results into paginated response, page + continuation token
+func PaginatedResponse[T models.IDGetter](records []T, pageSize int) ([]T, string) {
+	var continuationToken string
+	var page []T
+
+	// create continuation token from last record
+	if len(records) == pageSize+1 {
+		page = records[:len(records)-1]
+		lastRecord := records[len(records)-1]
+		idByteString := make([]byte, 8)
+		binary.LittleEndian.PutUint64(idByteString, lastRecord.GetID())
+		continuationToken = base64.StdEncoding.EncodeToString(idByteString)
+	} else {
+		page = records
+		continuationToken = ""
+	}
+
+	return page, continuationToken
 }

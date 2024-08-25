@@ -11,13 +11,15 @@ import (
 type PaginationRequest struct {
 	ContinuationToken string `query:"continuationToken" validate:"omitempty,base64"`
 	PageSize          int    `query:"pageSize" validate:"required,min=5,max=100"`
-	OrderDesc         bool   `query:"orderDesc" validate:"boolean"`
 }
 
 func (p *PaginationRequest) DecodeToken() (uint64, error) {
 	decodedByte, err := base64.StdEncoding.DecodeString(p.ContinuationToken)
-	decodedUint := binary.BigEndian.Uint64(decodedByte)
-	return decodedUint, err
+	if err != nil {
+		return 0, err
+	}
+	decodedToken := binary.LittleEndian.Uint64(decodedByte)
+	return decodedToken, nil
 }
 
 type PaginationResponse struct {

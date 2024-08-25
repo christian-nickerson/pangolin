@@ -1,5 +1,5 @@
 package models
 
 type IDGetter interface {
-	GetID() uint
+	GetID() uint64
 }

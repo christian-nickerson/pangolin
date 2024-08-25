@@ -11,67 +11,102 @@ import (
 	"github.com/christian-nickerson/pangolin/api/internal/configs"
 	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
 	"github.com/christian-nickerson/pangolin/api/internal/models"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-var databaseSettings configs.DatabaseConfig = configs.DatabaseConfig{
-	Type:     "sqlite",
-	Host:     "test",
-	Port:     0,
-	DbName:   "test",
-	Username: "test",
-	Password: "test",
+type DatabaseEndpointsSuite struct {
+	suite.Suite
+	app      *fiber.App
+	nRecords int
+	pageSize int
+	pages    int64
 }
 
-// Test get databases returns correct records
-func TestGetDatabases(t *testing.T) {
-	var nRecords int64 = 13
-	var pageSize int = 5
-	var pages int64 = int64(math.Ceil(float64(nRecords) / float64(pageSize)))
+// set up app & DB
+func (s *DatabaseEndpointsSuite) SetupTest() {
+	// set up values
+	s.nRecords = 13
+	s.pageSize = 5
+	s.pages = int64(math.Ceil(float64(s.nRecords) / float64(s.pageSize)))
 
-	// set up database
-	databases.Connect(&databaseSettings)
-	for i := range nRecords {
+	// set up app & database
+	s.app = fiber.New()
+	AddDatabaseRoutes(s.app)
+	databases.Connect(&configs.DatabaseConfig{Type: "sqlite", DbName: "test"})
+}
+
+// build default records
+func (s *DatabaseEndpointsSuite) BeforeTest(suiteName, testName string) {
+	for i := range s.nRecords {
 		name := fmt.Sprintf("test%v", i)
 		record := models.Database{Name: name}
 		databases.DB.Create(&record)
 	}
+}
 
-	// setup app
-	app := fiber.New()
-	AddDatabaseRoutes(app)
+// tear down all records after test
+func (s *DatabaseEndpointsSuite) AfterTest(suiteName, testName string) {
+	databases.DB.Where("id IS NOT NULL").Delete(&models.Database{})
+}
 
-	// test request
-	path := fmt.Sprintf("/databases?pageSize=%v", pageSize)
-	request := httptest.NewRequest("GET", path, nil)
-	response, _ := app.Test(request)
+// shutdown app & DB
+func (s *DatabaseEndpointsSuite) TearDownTest() {
+	s.app.Shutdown()
+	databases.DB.Migrator().DropTable(&models.Database{})
+}
 
-	assert.Equal(t, 200, response.StatusCode)
-
-	// test response body
+// Test get databases paginates across all records correctly
+func (s *DatabaseEndpointsSuite) TestGetDatabases() {
 	var result models.DatabaseResponse
-	defer response.Body.Close()
-	body, _ := io.ReadAll(response.Body)
-	json.Unmarshal(body, &result)
+	var records []models.Database
+	var continuationToken string
+	var endPagination bool = false
 
-	assert.Equal(t, pageSize, len(result.Data))
-	assert.Equal(t, nRecords, result.TotalRecords)
-	assert.Equal(t, pages, result.TotalPages)
+	for endPagination != true {
+		// build path
+		path := fmt.Sprintf("/databases?pageSize=%v", s.pageSize)
+		if continuationToken != "" {
+			path = path + fmt.Sprintf("&continuationToken=%v", continuationToken)
+		}
+
+		// get body response
+		request := httptest.NewRequest("GET", path, nil)
+		response, _ := s.app.Test(request)
+		defer response.Body.Close()
+		body, _ := io.ReadAll(response.Body)
+		json.Unmarshal(body, &result)
+
+		// test per request assertions
+		s.Assert().Equal(200, response.StatusCode)
+		s.Assert().Equal(int64(s.nRecords), result.TotalRecords)
+		s.Assert().Equal(s.pages, result.TotalPages)
+
+		// set up loop over
+		continuationToken = result.ContinuationToken
+		records = append(records, result.Data...)
+		if len(result.Data) < s.pageSize {
+			endPagination = true
+		}
+	}
+
+	s.Assert().Equal(s.nRecords, len(records))
 }
 
 // Test get databases returns 204 when there are no records
-// func TestGetDatabasesNoRecords(t *testing.T) {
-// 	// setup app
-// 	app := fiber.New()
-// 	AddDatabaseRoutes(app)
-// 	err := databases.Connect(&databaseSettings)
-// 	assert.NoError(t, err, nil, "failed to connect to database")
+func (s *DatabaseEndpointsSuite) TestGetDatabasesNoRecords() {
+	// delete records
+	databases.DB.Where("id IS NOT NULL").Delete(&models.Database{})
 
-// 	// test request
-// 	path := fmt.Sprintf("/databases?pageSize=%v", 5)
-// 	request := httptest.NewRequest("GET", path, nil)
-// 	response, _ := app.Test(request)
+	// test request
+	path := fmt.Sprintf("/databases?pageSize=%v", s.pageSize)
+	request := httptest.NewRequest("GET", path, nil)
+	response, _ := s.app.Test(request)
 
-// 	assert.Equal(t, 204, response.StatusCode)
-// }
+	s.Assert().Equal(204, response.StatusCode)
+}
+
+func TestDatabaseEndpointsSuite(t *testing.T) {
+	suite.Run(t, new(DatabaseEndpointsSuite))
+}
