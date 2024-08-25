@@ -10,91 +10,109 @@ import (
 // add database routes to a fiber app
 func AddDatabaseRoutes(route fiber.Router) {
 	group := route.Group("/databases")
-
-	group.Get("", models.ValidatePagination, GetDatabases)
-	group.Get("/:id", GetDatabase)
-	group.Post("", models.ValidateDatabase, CreateDatabase)
-	group.Patch("/:id", models.ValidateDatabase, UpdateDatabase)
-	group.Delete("/:id", DeleteDatabase)
+	group.Get("", models.ValidateQueries(&models.PaginationRequest{}), GetDatabases())
+	group.Get("/:id", GetDatabase())
+	group.Post("", models.ValidateBody(&models.Database{}), CreateDatabase())
+	group.Patch("/:id", models.ValidateBody(&models.Database{}), UpdateDatabase())
+	group.Delete("/:id", DeleteDatabase())
 }
 
 // return paginated database records
-func GetDatabases(c *fiber.Ctx) error {
+func GetDatabases() func(c *fiber.Ctx) error {
+
 	var prq models.PaginationRequest
 	var prp models.PaginationResponse
-	var dbRecords []models.Database
+	var records []models.Database
 
-	if err := c.QueryParser(&prq); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+	return func(c *fiber.Ctx) error {
+
+		if err := c.QueryParser(&prq); err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+		}
+
+		if result := databases.DB.Scopes(
+			databases.Paginate(records, &prq, &prp, databases.DB),
+		).Find(&records); result.RowsAffected == 0 {
+			return c.Status(fiber.StatusNoContent).SendString("No records found")
+		}
+
+		records, prp.ContinuationToken = databases.PaginatedResponse(records, prq.PageSize)
+		return c.Status(fiber.StatusOK).JSON(
+			models.DatabaseResponse{
+				Data:               records,
+				PaginationResponse: prp,
+			},
+		)
 	}
-
-	if result := databases.DB.Scopes(
-		databases.Paginate(dbRecords, &prq, &prp, databases.DB),
-	).Find(&dbRecords); result.RowsAffected == 0 {
-		return c.Status(fiber.StatusNoContent).SendString("No records found")
-	}
-
-	dbRecords, prp.ContinuationToken = databases.PaginatedResponse(dbRecords, prq.PageSize)
-	return c.Status(fiber.StatusOK).JSON(
-		models.DatabaseResponse{
-			Data:               dbRecords,
-			PaginationResponse: prp,
-		},
-	)
 }
 
 // return a specific database record
-func GetDatabase(c *fiber.Ctx) error {
-	id := c.Params("id")
-	var dbRecords models.Database
+func GetDatabase() func(c *fiber.Ctx) error {
 
-	// TODO: add where statement to correct IDs
-	result := databases.DB.Find(&dbRecords, id)
-	if result.RowsAffected == 0 {
-		return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+	var record models.Database
+
+	return func(c *fiber.Ctx) error {
+
+		id := c.Params("id")
+		result := databases.DB.Find(&record, id)
+		if result.RowsAffected == 0 {
+			return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+		}
+
+		return c.Status(fiber.StatusOK).JSON(record)
 	}
-
-	return c.Status(fiber.StatusOK).JSON(dbRecords)
 }
 
 // create new database record
-func CreateDatabase(c *fiber.Ctx) error {
-	dbRecord := new(models.Database)
+func CreateDatabase() func(c *fiber.Ctx) error {
 
-	if err := c.BodyParser(dbRecord); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+	var record models.Database
+
+	return func(c *fiber.Ctx) error {
+
+		if err := c.BodyParser(record); err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+		}
+
+		databases.DB.Create(&record)
+		return c.SendStatus(fiber.StatusCreated)
 	}
-
-	databases.DB.Create(&dbRecord)
-	return c.SendStatus(fiber.StatusCreated)
 }
 
 // update an existing database record
-func UpdateDatabase(c *fiber.Ctx) error {
-	dbRecord := new(models.Database)
-	id := c.Params("id")
+func UpdateDatabase() func(c *fiber.Ctx) error {
 
-	if err := c.BodyParser(dbRecord); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+	var record models.Database
+
+	return func(c *fiber.Ctx) error {
+
+		if err := c.BodyParser(record); err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
+		}
+
+		id := c.Params("id")
+		result := databases.DB.Where("id = ?", id).Updates(&record)
+		if result.RowsAffected == 0 {
+			return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+		}
+
+		return c.SendStatus(fiber.StatusOK)
 	}
-
-	result := databases.DB.Where("id = ?", id).Updates(&dbRecord)
-	if result.RowsAffected == 0 {
-		return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
-	}
-
-	return c.SendStatus(fiber.StatusOK)
 }
 
 // delete a database record
-func DeleteDatabase(c *fiber.Ctx) error {
-	id := c.Params("id")
+func DeleteDatabase() func(c *fiber.Ctx) error {
+
 	var dbRecord models.Database
 
-	result := databases.DB.Delete(&dbRecord, id)
-	if result.RowsAffected == 0 {
-		return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
-	}
+	return func(c *fiber.Ctx) error {
 
-	return c.SendStatus(fiber.StatusOK)
+		id := c.Params("id")
+		result := databases.DB.Delete(&dbRecord, id)
+		if result.RowsAffected == 0 {
+			return c.Status(fiber.StatusNotFound).SendString("Couldn't find database record")
+		}
+
+		return c.SendStatus(fiber.StatusOK)
+	}
 }
