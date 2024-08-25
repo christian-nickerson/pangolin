@@ -112,16 +112,17 @@ func UpdateDatabase() func(c *fiber.Ctx) error {
 // delete a database record
 func DeleteDatabase() func(c *fiber.Ctx) error {
 
-	var dbRecord models.Database
+	var record models.Database
 
 	return func(c *fiber.Ctx) error {
 
 		id := c.Params("id")
-		result := databases.DB.Delete(&dbRecord, id)
+		result := databases.DB.Delete(&record, id)
 		if result.RowsAffected == 0 {
 			return c.Status(fiber.StatusNotFound).SendString(notFound)
 		}
 
-		return c.SendStatus(fiber.StatusOK)
+		databases.DB.Unscoped().Find(&record, id)
+		return c.Status(fiber.StatusOK).JSON(record)
 	}
 }

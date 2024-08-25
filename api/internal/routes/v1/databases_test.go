@@ -236,6 +236,37 @@ func (s *DatabaseEndpointsSuite) TestUpdateDatabaseUnprocessible() {
 	s.Assert().Equal(422, response.StatusCode)
 }
 
+// Test delete database
+func (s *DatabaseEndpointsSuite) TestDeleteDatabase() {
+	var result models.Database
+	var record models.Database
+
+	request := httptest.NewRequest("DELETE", "/databases/1", nil)
+	response, _ := s.app.Test(request)
+
+	defer response.Body.Close()
+	respBody, _ := io.ReadAll(response.Body)
+	json.Unmarshal(respBody, &result)
+	resultDeletion, _ := result.DeletedAt.Value()
+
+	databases.DB.Unscoped().Where("id == ?", result.ID).Find(&record)
+	recordDeletion, _ := record.DeletedAt.Value()
+
+	s.Assert().Equal(200, response.StatusCode)
+	s.Assert().Equal(uint64(1), result.ID)
+	s.Assert().Equal(uint64(1), record.ID)
+	s.Assert().Greater(resultDeletion, result.CreatedAt)
+	s.Assert().Greater(recordDeletion, record.CreatedAt)
+}
+
+// Test update database returns 404
+func (s *DatabaseEndpointsSuite) TestDeleteDatabasenotFound() {
+	request := httptest.NewRequest("DELETE", "/databases/100", nil)
+	response, _ := s.app.Test(request)
+
+	s.Assert().Equal(404, response.StatusCode)
+}
+
 func TestDatabaseEndpointsSuite(t *testing.T) {
 	suite.Run(t, new(DatabaseEndpointsSuite))
 }
