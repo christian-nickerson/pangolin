@@ -13,11 +13,11 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 
-	"github.com/christian-nickerson/pangolin/api/internal/configs"
-	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
-	"github.com/christian-nickerson/pangolin/api/internal/logging"
-	"github.com/christian-nickerson/pangolin/api/internal/routes/health"
-	v1 "github.com/christian-nickerson/pangolin/api/internal/routes/v1"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/configs"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/engines/databases"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/logging"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/routes/health"
+	v1 "github.com/christian-nickerson/pangolin/pangolin/internal/routes/v1"
 )
 
 // Run the Fiber app

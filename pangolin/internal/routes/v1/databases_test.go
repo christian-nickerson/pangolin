@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/christian-nickerson/pangolin/api/internal/configs"
-	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
-	"github.com/christian-nickerson/pangolin/api/internal/models"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/configs"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/engines/databases"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/suite"
