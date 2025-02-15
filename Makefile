@@ -21,3 +21,8 @@ proto:
 		proto/*.proto
 
 	cd embedding/src/proto && sed -i 's/^\(import.*pb2\)/from . \1/g' *.py
+
+docker-build:
+
+	docker build -f Dockerfile.pangolin -t pangolin:latest .
+	docker build -f Dockerfile.pangolin-mdoels -t pangolin-mdoels:latest .
