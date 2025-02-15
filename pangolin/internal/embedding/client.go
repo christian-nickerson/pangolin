@@ -7,7 +7,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/christian-nickerson/pangolin/api/internal/proto"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/proto"
 )
 
 var Client proto.EmbeddingsClient

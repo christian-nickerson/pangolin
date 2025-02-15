@@ -1,0 +1,20 @@
+FROM golang:1.22 AS builder
+
+WORKDIR /pangolin
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY pangolin/ ./pangolin
+
+RUN go build -o app ./pangolin/cmd
+
+FROM gcr.io/distroless/base-debian10
+
+COPY --from=builder /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/
+COPY --from=builder /lib64/ld-linux-x86-64.so.2 /lib64/
+COPY --from=builder ./pangolin/app ./pangolin/app
+
+COPY settings.toml ./
+
+ENTRYPOINT ["./pangolin/app"]

@@ -7,8 +7,8 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/christian-nickerson/pangolin/api/internal/configs"
-	"github.com/christian-nickerson/pangolin/api/internal/models"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/configs"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 )
 
 var DB *gorm.DB

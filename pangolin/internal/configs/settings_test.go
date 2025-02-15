@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/christian-nickerson/pangolin/api/testing"
+	_ "github.com/christian-nickerson/pangolin/pangolin/testing"
 	"github.com/stretchr/testify/assert"
 )
 

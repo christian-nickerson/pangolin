@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"github.com/christian-nickerson/pangolin/api/internal/models"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 )
 
 // Cursor pagination Gorm Scope. Will return pageSize + 1 records

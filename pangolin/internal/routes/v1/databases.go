@@ -3,8 +3,8 @@ package v1
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/christian-nickerson/pangolin/api/internal/engines/databases"
-	"github.com/christian-nickerson/pangolin/api/internal/models"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/engines/databases"
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 )
 
 var notFound string = "Couldn't find database record"
