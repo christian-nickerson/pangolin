@@ -3,9 +3,10 @@ from typing import Dict, List
 
 from config import settings
 from exceptions.embedding import ModelRemoteImportError
-from models.base import EmbeddingModels
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import is_sentence_transformer_model
+
+from models.base import EmbeddingModels
 
 logger = logging.getLogger(settings.server.embeddings.name)
 
@@ -27,7 +28,7 @@ class SentenceTransformerModels(EmbeddingModels):
         :param model_name: model name to use to generate embedding
         :return: embedding
         """
-        embedding = self.__registry[model_name].encode(text)
+        embedding = self.__registry[model_name].encode(text, convert_to_numpy=True)
         return embedding.tolist()
 
     def _load_models(self, model_list: List[str]) -> Dict[str, SentenceTransformer]:

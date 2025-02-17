@@ -19,6 +19,7 @@ black = "^24.4.2"
 mypy = "^1.11.1"
 types-protobuf = "^5.27.0.20240626"
 grpcio-tools = "^1.65.1"
+grpc-stubs = "^1.53.0.5"
 
 [tool.poetry.group.embedding-server.dependencies]
 dynaconf = "^3.2.6"
