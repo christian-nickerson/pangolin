@@ -3,7 +3,6 @@ from grpc_interceptor.exceptions import GrpcException
 
 
 class ModelNotImplemented(GrpcException):
-
     status_code: StatusCode = StatusCode.INVALID_ARGUMENT
     details: str = "{name} is not implemented. Please see implemented models from ModelList method."
 
