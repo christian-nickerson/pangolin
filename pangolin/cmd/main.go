@@ -20,32 +20,37 @@ import (
 	v1 "github.com/christian-nickerson/pangolin/pangolin/internal/routes/v1"
 )
 
-// Run the Fiber app
-func startService(settings *configs.Settings) (*fiber.App, error) {
+// Build & run app
+func startService(settings *configs.Settings) *fiber.App {
+
 	// configure fiber app
 	app := fiber.New(fiber.Config{
 		AppName:               "Pangolin",
 		JSONEncoder:           json.Marshal,
 		JSONDecoder:           json.Unmarshal,
-		DisableStartupMessage: false,
+		DisableStartupMessage: true,
 	})
 
-	// logging
+	// middleware and routes
 	app.Use(requestid.New())
 	app.Use(logger.New(logging.LoggingConfig))
-
-	// routes
 	app.Use(healthcheck.New(health.HealthCheckConfig))
 	v1.AddV1Routes(app)
 
-	// serve
-	address := fmt.Sprintf("127.0.0.1:%v", settings.Server.API.Port)
-	err := app.Listen(address)
+	// start serving in new goroutine
+	go func() {
+		address := fmt.Sprintf("127.0.0.1:%v", settings.Server.API.Port)
+		if err := app.Listen(address); err != nil {
+			log.Fatal(err.Error())
+		}
+	}()
 
-	return app, err
+	return app
 }
 
+// Handle IO to service & run
 func main() {
+
 	// handle interruptions
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
@@ -55,26 +60,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
 	if err := databases.Connect(&settings.Metadata.Database); err != nil {
 		log.Fatal(err.Error())
 	}
 
-	// start service
-	app, err := startService(&settings)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
+	// start service and wait for signal
+	app := startService(&settings)
 	log.Printf("Started serving on http://127.0.0.1:%v\n", settings.Server.API.Port)
 	<-ctx.Done()
 
-	// enter graceful shutdown
+	log.Println("Starting shutting down...")
+
+	// shutdown and close connections
 	if err := app.Shutdown(); err != nil {
 		log.Fatal(err.Error())
 	}
-
 	if err := databases.Close(); err != nil {
 		log.Fatal(err.Error())
 	}
+
+	log.Println("Pangolin successfully shutdown.")
 }

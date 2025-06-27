@@ -63,7 +63,7 @@ func (s *DatabaseEndpointsSuite) TestGetDatabases() {
 	var result models.DatabaseResponse
 	var records []models.Database
 	var continuationToken string
-	var endPagination bool = false
+	var endPagination = false
 
 	for endPagination != true {
 		// build path

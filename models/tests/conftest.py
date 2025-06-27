@@ -39,7 +39,7 @@ def model_name() -> str:
 @pytest.fixture
 def lorem_ipsum() -> str:
     """lorem ipsum test text"""
-    with open("embedding/tests/fixtures/lorem.txt", "r") as file:
+    with open("models/tests/fixtures/lorem.txt", "r") as file:
         return file.read()
 
 
