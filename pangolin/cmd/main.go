@@ -14,10 +14,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 
 	"github.com/christian-nickerson/pangolin/pangolin/internal/configs"
-	"github.com/christian-nickerson/pangolin/pangolin/internal/engines/databases"
 	"github.com/christian-nickerson/pangolin/pangolin/internal/logging"
 	"github.com/christian-nickerson/pangolin/pangolin/internal/routes/health"
-	v1 "github.com/christian-nickerson/pangolin/pangolin/internal/routes/v1"
 )
 
 // Build & run app
@@ -35,7 +33,6 @@ func startService(settings *configs.Settings) *fiber.App {
 	app.Use(requestid.New())
 	app.Use(logger.New(logging.LoggingConfig))
 	app.Use(healthcheck.New(health.HealthCheckConfig))
-	v1.AddV1Routes(app)
 
 	// start serving in new goroutine
 	go func() {
@@ -60,9 +57,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	if err := databases.Connect(&settings.Metadata.Database); err != nil {
-		log.Fatal(err.Error())
-	}
 
 	// start service and wait for signal
 	app := startService(&settings)
@@ -73,9 +67,6 @@ func main() {
 
 	// shutdown and close connections
 	if err := app.Shutdown(); err != nil {
-		log.Fatal(err.Error())
-	}
-	if err := databases.Close(); err != nil {
 		log.Fatal(err.Error())
 	}
 
