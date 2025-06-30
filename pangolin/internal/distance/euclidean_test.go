@@ -3,12 +3,14 @@ package distance
 import (
 	"math"
 	"testing"
+
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 )
 
 func TestEuclideanDistance(t *testing.T) {
 	testCases := []struct {
 		name      string
-		a, b      []float64
+		a, b      models.Vector
 		want      float64
 		expectErr bool
 	}{

@@ -3,15 +3,17 @@ package distance
 import (
 	"fmt"
 	"math"
+
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 )
 
 // EuclideanDistance calculates the Euclidean distance between two vectors.
-func EuclideanDistance(a, b []float64) (float64, error) {
-	if len(a) != len(b) {
-		return 0, fmt.Errorf("vector lengths do not match: %d != %d", len(a), len(b))
+func EuclideanDistance(a, b models.Vector) (float64, error) {
+	if a.Length() != b.Length() {
+		return 0, fmt.Errorf("vector lengths do not match: %d != %d", a.Length(), b.Length())
 	}
 
-	if len(a) == 0 {
+	if a.Length() == 0 {
 		return 0, fmt.Errorf("vectors cannot be empty")
 	}
 

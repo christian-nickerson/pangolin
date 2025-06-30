@@ -3,16 +3,17 @@ package distance
 import (
 	"fmt"
 	"math"
+
+	"github.com/christian-nickerson/pangolin/pangolin/internal/models"
 )
 
 // CosineSimilarity calculates the cosine similarity between two vectors.
-// It returns a score between -1 (perfectly dissimilar) and 1 (perfectly similar).
-func CosineSimilarity(a, b []float64) (float64, error) {
-	if len(a) != len(b) {
-		return 0, fmt.Errorf("vector lengths do not match: %d != %d", len(a), len(b))
+func CosineSimilarity(a, b models.Vector) (float64, error) {
+	if a.Length() != b.Length() {
+		return 0, fmt.Errorf("vector lengths do not match: %d != %d", a.Length(), b.Length())
 	}
 
-	if len(a) == 0 {
+	if a.Length() == 0 {
 		return 0, fmt.Errorf("vectors cannot be empty")
 	}
 
@@ -20,7 +21,7 @@ func CosineSimilarity(a, b []float64) (float64, error) {
 	normA := 0.0
 	normB := 0.0
 
-	for i := range len(a) {
+	for i := range a.Length() {
 		dotProduct += a[i] * b[i]
 		normA += a[i] * a[i]
 		normB += b[i] * b[i]
