@@ -18,7 +18,7 @@ import (
 	"github.com/christian-nickerson/pangolin/pangolin/internal/routes/health"
 )
 
-// Build & run app
+// Build & run control plane
 func startService(settings *configs.Settings) *fiber.App {
 
 	// configure fiber app
