@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 
+	"github.com/charmbracelet/log"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
@@ -60,15 +60,15 @@ func main() {
 
 	// start service and wait for signal
 	app := startService(&settings)
-	log.Printf("Started serving on http://127.0.0.1:%v\n", settings.Server.API.Port)
+	log.Infof("Started serving on http://127.0.0.1:%v\n", settings.Server.API.Port)
 	<-ctx.Done()
 
-	log.Println("Starting shutting down...")
+	log.Info("Starting shutting down...")
 
 	// shutdown and close connections
 	if err := app.Shutdown(); err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println("Pangolin successfully shutdown.")
+	log.Info("Pangolin successfully shutdown.")
 }
