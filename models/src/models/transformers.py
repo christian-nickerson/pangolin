@@ -12,7 +12,6 @@ logger = logging.getLogger(settings.server.embeddings.name)
 
 
 class SentenceTransformerModels(EmbeddingModels):
-
     def __init__(self, model_list: List[str]) -> None:
         """Sentence Transformer Models object for importing and inferencing embedding model classes
 

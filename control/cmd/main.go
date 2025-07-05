@@ -13,9 +13,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 
-	"github.com/christian-nickerson/pangolin/pangolin/internal/configs"
-	"github.com/christian-nickerson/pangolin/pangolin/internal/logging"
-	"github.com/christian-nickerson/pangolin/pangolin/internal/routes/health"
+	"github.com/christian-nickerson/pangolin/control/internal/configs"
+	"github.com/christian-nickerson/pangolin/control/internal/logging"
+	"github.com/christian-nickerson/pangolin/control/internal/routes/health"
 )
 
 // Build & run control plane

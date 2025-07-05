@@ -14,7 +14,6 @@ from proto.embedding_pb2_grpc import EmbeddingsServicer
 
 
 class EmbeddingsService(EmbeddingsServicer):
-
     def __init__(self, model_list: List[str]):
         """Embeddings gRPC service
 
