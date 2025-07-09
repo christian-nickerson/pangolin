@@ -1,6 +1,4 @@
-use config::{Config, ConfigError, File};
 use serde::{Deserialize, Serialize};
-use std::path::Path;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Settings {
@@ -55,27 +53,6 @@ pub struct Database {
     pub password: String,
 }
 
-impl Settings {
-    /// Load settings from a TOML file
-    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
-        let config = Config::builder()
-            .add_source(File::from(path.as_ref()))
-            .build()?;
-
-        config.try_deserialize()
-    }
-
-    /// Load settings from the default settings.toml file
-    pub fn load() -> Result<Self, ConfigError> {
-        Self::from_file("settings.toml")
-    }
-
-    /// Load settings with custom configuration
-    pub fn load_with_config(config: Config) -> Result<Self, ConfigError> {
-        config.try_deserialize()
-    }
-}
-
 impl Default for Settings {
     fn default() -> Self {
         Self {
@@ -117,16 +94,6 @@ impl Default for Settings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::Path;
-
-    #[test]
-    fn test_load_settings_from_file() {
-        // Test loading from the actual settings.toml file if it exists
-        if Path::new("../../settings.toml").exists() {
-            let settings = Settings::from_file("../../settings.toml");
-            assert!(settings.is_ok());
-        }
-    }
 
     #[test]
     fn test_default_settings() {
