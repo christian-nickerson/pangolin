@@ -74,9 +74,7 @@ impl Default for Settings {
                     "all-MiniLM-L6-v2".to_string(),
                 ],
             },
-            spacy: Spacy {
-                model_list: vec![],
-            },
+            spacy: Spacy { model_list: vec![] },
             metadata: Metadata {
                 database: Database {
                     r#type: "sqlite".to_string(),

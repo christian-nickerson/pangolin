@@ -5,7 +5,7 @@ edition = "2024"
 
 [[bin]]
 name = "index"
-path = "index/src/main.rs"
+path = "nodes/src/index.rs"
 
 [dependencies]
 config = "0.14"
@@ -14,4 +14,5 @@ toml = "0.8"
 tempfile = "3.10"
 
 [dev-dependencies]
-serial_test = "3.0.0"
+sealed_test = "1.1.0"
+serial_test = "3.2.0"
