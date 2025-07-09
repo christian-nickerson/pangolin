@@ -441,6 +441,7 @@ name = "pangolin"
 version = "0.1.0"
 dependencies = [
  "config",
+ "log",
  "sealed_test",
  "serde",
  "serial_test",
