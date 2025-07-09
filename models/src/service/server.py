@@ -11,7 +11,6 @@ logger = logging.getLogger(settings.server.embeddings.name)
 
 
 class Server:
-
     def __init__(
         self,
         address="[::]",

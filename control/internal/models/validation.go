@@ -13,7 +13,7 @@ type IError struct {
 
 var Validator = validator.New()
 
-// Validate query parameters
+// ValidateQueries validates query parameters
 func ValidateQueries(queryStruct interface{}) func(c *fiber.Ctx) error {
 
 	var errors []*IError
@@ -39,7 +39,7 @@ func ValidateQueries(queryStruct interface{}) func(c *fiber.Ctx) error {
 	}
 }
 
-// Validate body parameters
+// ValidateBody validates body parameters
 func ValidateBody(bodyStuct interface{}) func(c *fiber.Ctx) error {
 
 	var errors []*IError

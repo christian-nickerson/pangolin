@@ -1,0 +1,18 @@
+[package]
+name = "pangolin"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "index"
+path = "nodes/src/index.rs"
+
+[dependencies]
+config = "0.14"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+tempfile = "3.10"
+
+[dev-dependencies]
+sealed_test = "1.1.0"
+serial_test = "3.2.0"

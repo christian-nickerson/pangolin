@@ -14,7 +14,6 @@ def add_services(server: Server) -> None:
 
 
 if __name__ == "__main__":
-
     loggger = create_logger(settings.server.embeddings.name)
 
     server = Server(

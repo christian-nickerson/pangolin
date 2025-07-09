@@ -7,7 +7,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/christian-nickerson/pangolin/pangolin/internal/proto"
+	"github.com/christian-nickerson/pangolin/control/internal/proto"
 )
 
 var Client proto.EmbeddingsClient
@@ -30,7 +30,10 @@ func Inference(text *[]string, modelName string) []*proto.Vector {
 	defer cancel()
 
 	// call model
-	response, err := Client.Inference(ctx, &proto.InferenceRequest{Text: *text, ModelName: modelName})
+	response, err := Client.Inference(
+		ctx,
+		&proto.InferenceRequest{Text: *text, ModelName: modelName},
+	)
 	if err != nil {
 		log.Fatalf("Client.Inference failed on model %v: %v", modelName, err)
 	}

@@ -15,7 +15,6 @@ def status(code: StatusCode) -> str:
 
 
 class ExceptionLoggingInterceptor(ServerInterceptor):
-
     def intercept(
         self,
         method: Callable[..., Any],

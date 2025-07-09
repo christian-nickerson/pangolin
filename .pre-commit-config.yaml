@@ -35,3 +35,29 @@ repos:
       - id: go-fmt
       - id: golangci-lint
       - id: go-unit-tests
+
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        description: "Check formatting of Rust files."
+        entry: cargo fmt --check
+        language: system
+        files: ^nodes/.*\.rs$
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: cargo clippy
+        description: "Lint Rust files with clippy."
+        entry: cargo clippy -- -D warnings
+        language: system
+        files: ^nodes/.*\.rs$
+        pass_filenames: false
+
+      - id: cargo-check
+        name: cargo check
+        description: "Check the package for errors."
+        entry: cargo check
+        language: system
+        files: ^nodes/.*\.rs$
+        pass_filenames: false

@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Settings strucuture
+// Settings configurations
 type Settings struct {
 	Server   Server   `mapstructure:"server"`
 	Metadata Metadata `mapstructure:"metadata"`
@@ -23,7 +23,7 @@ type Metadata struct {
 	Database DatabaseConfig `mapstructure:"database"`
 }
 
-// Config types
+// ServerConfig server configurations
 type ServerConfig struct {
 	Name string `mapstructure:"name"`
 	Port int    `mapstructure:"port"`
@@ -33,7 +33,7 @@ type DatabaseConfig struct {
 	Type     string `mapstructure:"type"`
 	Host     string `mapstructure:"host"`
 	Port     int    `mapstructure:"port"`
-	DbName   string `mapstructure:"dbname"`
+	DBName   string `mapstructure:"dbname"`
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
