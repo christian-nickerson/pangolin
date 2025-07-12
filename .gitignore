@@ -201,5 +201,3 @@ cython_debug/
 
 # VSCode settings
 .vscode
-
-AGENTS.md
