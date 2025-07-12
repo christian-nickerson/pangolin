@@ -1,4 +1,5 @@
 mod config;
+mod distance;
 
 use config::settings::Settings;
 use log::{info, warn};
