@@ -1,30 +1,3 @@
-use std::fmt;
-
-#[allow(dead_code)]
-#[derive(Debug, PartialEq)]
-pub enum CosineError {
-    DimensionMismatch { len1: usize, len2: usize },
-    ZeroMagnitude,
-}
-
-impl fmt::Display for CosineError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            CosineError::DimensionMismatch { len1, len2 } => {
-                write!(f, "Vector dimension mismatch: {} != {}", len1, len2)
-            }
-            CosineError::ZeroMagnitude => {
-                write!(
-                    f,
-                    "Cannot compute cosine similarity with zero magnitude vector"
-                )
-            }
-        }
-    }
-}
-
-impl std::error::Error for CosineError {}
-
 #[allow(dead_code)]
 fn dot_product(vec1: &[f64], vec2: &[f64]) -> f64 {
     vec1.iter().zip(vec2.iter()).map(|(a, b)| a * b).sum()
@@ -36,9 +9,12 @@ fn magnitude(vec: &[f64]) -> f64 {
 }
 
 #[allow(dead_code)]
-pub fn cosine_similarity(vec1: &[f64], vec2: &[f64]) -> Result<f64, CosineError> {
+pub fn cosine_similarity(
+    vec1: &[f64],
+    vec2: &[f64],
+) -> Result<f64, crate::distance::error::DistanceError> {
     if vec1.len() != vec2.len() {
-        return Err(CosineError::DimensionMismatch {
+        return Err(crate::distance::error::DistanceError::DimensionMismatch {
             len1: vec1.len(),
             len2: vec2.len(),
         });
@@ -49,7 +25,7 @@ pub fn cosine_similarity(vec1: &[f64], vec2: &[f64]) -> Result<f64, CosineError>
     let mag2 = magnitude(vec2);
 
     if mag1 == 0.0 || mag2 == 0.0 {
-        return Err(CosineError::ZeroMagnitude);
+        return Err(crate::distance::error::DistanceError::ZeroMagnitude);
     }
 
     Ok(dot / (mag1 * mag2))
@@ -81,7 +57,7 @@ mod tests {
         assert!(result.is_err());
 
         match result.unwrap_err() {
-            CosineError::DimensionMismatch { len1, len2 } => {
+            crate::distance::error::DistanceError::DimensionMismatch { len1, len2 } => {
                 assert_eq!(len1, 3);
                 assert_eq!(len2, 2);
             }
@@ -98,7 +74,7 @@ mod tests {
         assert!(result.is_err());
 
         match result.unwrap_err() {
-            CosineError::ZeroMagnitude => {}
+            crate::distance::error::DistanceError::ZeroMagnitude => {}
             _ => panic!("Expected ZeroMagnitude error"),
         }
     }

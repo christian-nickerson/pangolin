@@ -1,27 +1,10 @@
-use std::fmt;
-
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
-pub enum EuclideanError {
-    DimensionMismatch { len1: usize, len2: usize },
-}
-
-impl fmt::Display for EuclideanError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            EuclideanError::DimensionMismatch { len1, len2 } => {
-                write!(f, "Vector dimension mismatch: {} != {}", len1, len2)
-            }
-        }
-    }
-}
-
-impl std::error::Error for EuclideanError {}
-
-#[allow(dead_code)]
-pub fn l2_distance(vec1: &[f64], vec2: &[f64]) -> Result<f64, EuclideanError> {
+pub fn l2_distance(
+    vec1: &[f64],
+    vec2: &[f64],
+) -> Result<f64, crate::distance::error::DistanceError> {
     if vec1.len() != vec2.len() {
-        return Err(EuclideanError::DimensionMismatch {
+        return Err(crate::distance::error::DistanceError::DimensionMismatch {
             len1: vec1.len(),
             len2: vec2.len(),
         });
@@ -61,7 +44,7 @@ mod tests {
         assert!(result.is_err());
 
         match result.unwrap_err() {
-            EuclideanError::DimensionMismatch { len1, len2 } => {
+            crate::distance::error::DistanceError::DimensionMismatch { len1, len2 } => {
                 assert_eq!(len1, vec1.len());
                 assert_eq!(len2, vec2.len());
             }
