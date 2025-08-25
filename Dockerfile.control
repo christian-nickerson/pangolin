@@ -17,4 +17,4 @@ COPY --from=builder ./pangolin/app ./pangolin/app
 
 COPY settings.toml ./
 
-ENTRYPOINT ["./pangolin/app"]
+ENTRYPOINT [ "./pangolin/app" ]

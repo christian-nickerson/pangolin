@@ -11,7 +11,7 @@ impl fmt::Display for DistanceError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             DistanceError::DimensionMismatch { len1, len2 } => {
-                write!(f, "Vector dimension mismatch: {} != {}", len1, len2)
+                write!(f, "Vector dimension mismatch: {len1} != {len2}")
             }
             DistanceError::ZeroMagnitude => {
                 write!(

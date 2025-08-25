@@ -12,7 +12,7 @@ fn main() {
             settings
         }
         Err(e) => {
-            warn!("config load failed: {}", e);
+            warn!("config load failed: {e}");
             warn!("reverting to default config");
             Settings::default()
         }
