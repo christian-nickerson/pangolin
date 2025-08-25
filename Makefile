@@ -22,4 +22,4 @@ proto:
 docker-build:
 
 	docker build -f Dockerfile.control -t pangolin-control:latest .
-	docker build -f Dockerfile.mdoels -t pangolin-mdoels:latest .
+	docker build -f Dockerfile.models -t pangolin-models:latest .
